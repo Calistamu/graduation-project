@@ -14,9 +14,9 @@ Design and Implementation of Linux Red Team Adversary Emulation Tools
 解释：假设我们新开发了一个安全产品或搭建了一个自认为安全的网络（诸如此类，在此称之为"保护对象"），在"保护对象"投入市场前，已经有针对我们当前这个"保护对象"的同类做出的攻击行为，因此，先给"保护对象"制作一个基于历史攻击行为的完备防御护罩，再投入市场。   
 模拟运行一个攻击方工具，假设我们会被它攻击，在此基础上"像一个攻击者一样"反向思考，即这个攻击方如何攻击我们就如何率先防御，去评估产品的安全性，进行威胁建模（具体的是要完成若干威胁检测能力算法或工具的横向测评实验），从而实现在产品投入市场之前就已经对当前产品做了先知性的防御准备。该毕设在市场应用中属于安服行业。
 #### 题目要求
-- [] 模拟运行攻击方工具。
-- [] 利用ATT&CK框架进行威胁建模，完成若干威胁检测能力算法。
-- [] 熟悉ids编写原理，甚至写一个自己的ids。
+- [] 模拟运行攻击方工具，明确其工作方式原理。
+- [] 熟悉ATT&CK框架，利用Suricata和Bro/Zeek写威胁检测脚本。
+- [] 进阶非必要，熟悉ids编写原理，甚至写一个自己的ids，完成一个较为成熟的威胁建模。
 #### 研究背景
 * 参考文献：  
 [Red versus blue:the battle of IT security](https://advantage.nz/red_blue_article/)    
@@ -132,11 +132,16 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 * 参考文献：  
 [威胁建模模型ATT&CK](https://www.freebuf.com/articles/network/197837.html)  
 [infectionmonkey](https://www.guardicore.com/infectionmonkey/)
+[Infection Monkey：数据中心边界及内部服务器安全检测工具](https://www.freebuf.com/sectool/113745.html)
 
 The Infection Monkey is an open source security tool for testing a data center’s resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island Command and Control server.    
 The Infection Monkey is comprised of two parts:  
 Monkey - A tool which infects other machines and propagates to them.  
 Monkey Island - A dedicated UI to visualize the Infection Monkey’s progress inside the data center.  
+感染猴是一个开源的安全工具，用于测试数据中心对周边攻击和内部服务器感染的弹性。Monkey使用各种方法在数据中心中自我传播，并将成功报告给集中式的Monkey Island命令和控制服务器。
+受感染的猴子由两部分组成:
+猴子-一种感染其他机器并向它们传播的工具。
+猴子岛——一个专用的UI，用于可视化受感染的猴子在数据中心内的进展。
 #### 工作量证明（三个月完成）
 1.题目的解读以及大量理论知识的学习和储备是必要的，一个月的准备时间（自2020.11开始，目前已完成）
 2.确定具体的模拟攻击方工具的环境搭建以及基本使用由于具有官方文档或前人使用经验，一周可以完成。
