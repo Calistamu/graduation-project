@@ -14,7 +14,7 @@ Design and Implementation of Linux Red Team Adversary Emulation Tools
 解释：假设我们新开发了一个安全产品或搭建了一个自认为安全的网络（诸如此类，在此称之为"保护对象"），在"保护对象"投入市场前，已经有针对我们当前这个"保护对象"的同类做出的攻击行为，因此，先给"保护对象"制作一个基于历史攻击行为的完备防御护罩，再投入市场。   
 模拟运行一个攻击方工具，假设我们会被它攻击，在此基础上"像一个攻击者一样"反向思考，即这个攻击方如何攻击我们就如何率先防御，去评估产品的安全性，进行威胁建模（具体的是要完成若干威胁检测能力算法或工具的横向测评实验），从而实现在产品投入市场之前就已经对当前产品做了先知性的防御准备。该毕设在市场应用中属于安服行业。
 #### 题目要求
-- [] 模拟运行攻击方工具，明确其工作方式原理。
+- [] 模拟运行攻击方工具，明确其工作方式原理，测试防御方防御能力。
 - [] 熟悉ATT&CK框架，利用Suricata和Bro/Zeek写威胁检测脚本。
 - [] 进阶非必要，熟悉ids编写原理，甚至写一个自己的ids，完成一个较为成熟的威胁建模。
 #### 研究背景
@@ -90,7 +90,7 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 * snort：没有真正的GUI或易于使用的管理控制台，其他开放源码工具(如BASE和Sguil)来提供帮助。这些工具提供了一个web前端，用于查询和分析来自Snort id的警报；单个线程运行。
 * OSSEC：属于HIDS；Rootkit检测，它搜索类似于Rootkit的系统修改；
 * Samhain Labs：属于HIDS；难安装；  
-   
+  
   * OSSEC VS Samhain Labs:  
   都是客户机/服务器架构。但Samhain Labs代理有多种输出方式，比如中央日志存储库、Syslog、电子邮件、RDBMS、也可以选择将Samhain作为单个主机上的独立应用程序使用。与OSSEC不同，Samhain Labs处理发生在客户端本身，避免了服务器超载而干扰操作。
 
@@ -128,12 +128,14 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 4. Analyze your detections of the procedure  
 5. Make improvements to your defenses
 
-#### 题目确定：基于infectionmonkey的威胁建模
+#### Infection Monkey-An Automated Pentest Tool 
+* 主要针对于数据中心边界及内部服务器安全的检测
 * 参考文献：  
 [威胁建模模型ATT&CK](https://www.freebuf.com/articles/network/197837.html)  
 [infectionmonkey](https://www.guardicore.com/infectionmonkey/)
 [Infection Monkey：数据中心边界及内部服务器安全检测工具](https://www.freebuf.com/sectool/113745.html)
 
+Introduction  
 The Infection Monkey is an open source security tool for testing a data center’s resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island Command and Control server.    
 The Infection Monkey is comprised of two parts:  
 Monkey - A tool which infects other machines and propagates to them.  
@@ -142,6 +144,9 @@ Monkey Island - A dedicated UI to visualize the Infection Monkey’s progress in
 受感染的猴子由两部分组成:
 猴子-一种感染其他机器并向它们传播的工具。
 猴子岛——一个专用的UI，用于可视化受感染的猴子在数据中心内的进展。
+
+Points  
+The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool that assesses the resiliency of private and public cloud environments to post-breach attacks and lateral movement.
 #### 工作量证明（三个月完成）
 1.题目的解读以及大量理论知识的学习和储备是必要的，一个月的准备时间（自2020.11开始，目前已完成）
 2.确定具体的模拟攻击方工具的环境搭建以及基本使用由于具有官方文档或前人使用经验，一周可以完成。
@@ -182,3 +187,19 @@ Monkey Island - A dedicated UI to visualize the Infection Monkey’s progress in
 2.威胁建模的代码或工具
 #### 参考文献
 [ATT&CK](https://attack.mitre.org)
+
+## 实验进展
+### 实验要求
+- [] 模拟运行攻击方工具，明确其工作方式原理，测试防御方防御能力。
+- [] 熟悉ATT&CK框架，利用Suricata和Bro/Zeek写威胁检测脚本。
+- [] 进阶非必要，熟悉ids编写原理，甚至写一个自己的ids，完成一个较为成熟的威胁建模。
+### 实验成果
+- [] 完整实验演示录屏（包括模拟工具的安装使用+攻击方模拟运行+威胁建模过程+防御措施使用过程及最终效果）
+- [] 威胁建模的代码或工具
+
+### 实验环境
+ubuntu20.04TLS
+### 实验步骤
+##### 一、模拟运行[Infection Monkey](https://www.guardicore.com/infectionmonkey/)
+1. 
+
