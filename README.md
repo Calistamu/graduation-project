@@ -193,13 +193,141 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 - [] 模拟运行攻击方工具，明确其工作方式原理，测试防御方防御能力。
 - [] 熟悉ATT&CK框架，利用Suricata和Bro/Zeek写威胁检测脚本。
 - [] 进阶非必要，熟悉ids编写原理，甚至写一个自己的ids，完成一个较为成熟的威胁建模。
+
+- [] 借助攻击方模拟工具，完成自动化/半自动化的内网渗透/信息收集/资产获取
+- [] 模拟运行一个攻击方工具
+- [] 搭建一个内网环境
+- [] 使用攻击方工具进行内网渗透/信息收集/资产获取
 ### 实验成果
 - [] 完整实验演示录屏（包括模拟工具的安装使用+攻击方模拟运行+威胁建模过程+防御措施使用过程及最终效果）
 - [] 威胁建模的代码或工具
 
 ### 实验环境
-ubuntu20.04TLS
+ubuntu 16.04 TLS amd64
 ### 实验步骤
 ##### 一、模拟运行[Infection Monkey](https://www.guardicore.com/infectionmonkey/)
-1. 
+1. 安装下载docker
+* 参考[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
+```
+1. Update the apt package index and install packages to allow apt to use a repository over HTTPS:
+$ sudo apt-get update
+
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+2. Add Docker’s official GPG key:
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# Verify that you now have the key with the fingerprint 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88, by searching for the last 8 characters of the fingerprint.
+
+$ sudo apt-key fingerprint 0EBFCD88
+# pub   rsa4096 2017-02-22 [SCEA]
+#       9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+# uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
+# sub   rsa4096 2017-02-22 [S]
+
+4. Use the following command to set up the stable repository. To add the nightly or test repository, add the word nightly or test (or both) after the word stable in the commands below. Learn about nightly and test channels.
+amd64:  
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+5. Update the apt package index, and install the latest version of Docker Engine and containerd, or go to the next step to install a specific version:
+ $ sudo apt-get update
+ $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+```
+* 执行```sudo apt-get install docker-ce docker-ce-cli containerd.io```时出现报错:'Unable to locate package `docker-ce` on a 64bit ubuntu'。参考[Unable to locate package `docker-ce` on a 64bit ubuntu](https://unix.stackexchange.com/questions/363048/unable-to-locate-package-docker-ce-on-a-64bit-ubuntu)执行：
+```
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+
+sudo apt update
+apt-cache search docker-ce
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+2. 从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。 
+![](images/001.png)
+3. Deployment
+```
+sudo docker load -i dk.monkeyisland.1.9.0.tar
+sudo docker pull mongo
+sudo mkdir -p /var/monkey-mongo/data/db
+sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo
+sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.9.0
+
+```
+* 执行'sudo docker pull mongo'时报错：'Error response from daemon: Head https://registry-1.docker.io/v2/library/mongo/manifests/latest: Get https://auth.docker.io/token?scope=repository%3Alibrary%2Fmongo%3Apull&service=registry.docker.io: net/http: TLS handshake timeout'。  
+参考[ERROR: Get https://registry-1.docker.io/v2/: net/http: TLS handshake timeout in Docker](https://stackoverflow.com/questions/52252791/error-get-https-registry-1-docker-io-v2-net-http-tls-handshake-timeout-in),重启docker```sudo systemctl restart docker```解决。
+![](images/002.png)
+* 执行'sudo docker pull mongo'时docker pull太慢，参考[Docker下载镜像太慢问题](https://www.cnblogs.com/spll/p/11828193.html)
+```
+sudo vim /etc/docker/daemon.json
+
+{
+  "registry-mirrors":["https://almtd3fa.mirror.aliyuncs.com"]
+}
+
+service docker restart
+```
+4. Usage
+访问https://<server-ip>:5000  
+![](images/003.png)
+注册用户名和密码后，进入使用页面  
+![](images/004.png)
+
+
+# caldera
+```
+git clone https://github.com/mitre/caldera.git 
+pip install -r requirements.txt
+
+pip install aiohttp
+pip install aiohttp_jinja2
+pip install aiohttp_security
+pip install aiohttp_session
+pip install idap3
+pip install marshmallow_enum
+```
+* AttributeError: module 'marshmallow' has no attribute 'INCLUDE'
+```
+python server.py
+```
+##### ubuntu16.04LTS安装vmware和virtualbox
+[virtualbox官网](https://www.virtualbox.org/)下载virtualbox-6.1_6.1.18-142142_Ubuntu_xenial_amd64.deb，并使用scp拷贝到ubuntu虚拟机中，重命名为virtualbox.deb。
+```
+sudo apt-get install  libqt5x11extras5 libsdl1.2debian
+sudo dpkg -i virtualbox.deb
+sudo virtualbox
+```
+* 参考[ubuntu 16.04下安装VMware-Workstation-12/14详细步骤](https://blog.51cto.com/337962/2095824)
+```
+# 安装开发工具
+sudo apt install build-essential\
+
+# 安装axel，使用axel下载vmware
+# (-n 选项指定线程的数目)
+sudo apt-get install axel
+axel -n 100 https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-12.1.1-3770994.x86_64.bundle 
+# 赋予权限
+chmod +x VMware-Workstation-Full-12.1.1-3770994.x86_64.bundle
+# 安装组件
+sudo apt-get install murrine-themes
+sudo apt-get install gtk2-engines-murrine
+sudo apt-get install libgtkmm-2.4-1c2a(libgtkmm-2.4-1v5:i386套件的其中之一)
+sudo apt-get install libgtkmm-2.4-dev
+sudo apt-get install libcanberra-gtk-module:i386
+sudo apt-get install gnome-tweak-tool
+sudo apt-get install gksu
+# install
+sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
+# 手动next安装完成
+```
 
