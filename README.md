@@ -27,11 +27,28 @@ Design and Implementation of Linux Red Team Adversary Emulation Tools
 为了进一步预测攻击者的行为，产生了对抗模拟构建一个场景来测试对手的战术、技术和过程的某些方面。从而使红队更积极地模拟对手的行为，也让防御者蓝队更有效地测试他们的网络和防御，以帮助更有效地测试产品和环境。
 ![](images/APT3-Emulation-Plan.png)
 #### 研究现状
-1.ATT&CK(Adversarial Tactics, Techniques, and Common Knowledge )---网络攻击行为知识库，回答了攻击者可能有哪些攻击行为，针对每一种攻击，作为防御者可以如何缓解或解决，以及如何检测是否遭受这样的攻击。  
-ATT&CK尽可能从公开的威胁情报和事件报告中，总结在软件生命周期内会遭受到的网络攻击行为。也称框架framework，因为它对于一些攻击行为有基础的防御流程。分为针对企业IT网络和云的攻击防范（ATT&CK for Enterprise）和针对移动设备的攻击防范（ATT&CK for Mobile）。方便防御者分类攻击和进行风险评估。  
-目前私人企业、政府以及网络安全产品和服务社区的特定威胁模型和方法都是以ATT&CK知识库为基础开发起来的具体或特定的威胁模型。
-* 特点：半年更新一次，具有时效性；内容较为全面，支持他人贡献；免费开放
-![](images/ATT&CKMatrixforEnterprise.png)  
+1.ATT&CK(Adversarial Tactics, Techniques, and Common Knowledge )
+定义：网络攻击行为知识库，反映入侵者生命周期各个阶段的攻击行为，回答了攻击者可能有哪些攻击行为，针对每一种攻击，作为防御者可以如何缓解或解决，以及如何检测是否遭受这样的攻击。  
+意义：ATT&CK尽可能从公开的威胁情报和事件报告中，总结在软件生命周期内会遭受到的网络攻击行为。也称框架framework，因为它对于一些攻击行为有基础的防御流程。分为针对企业IT网络和云的攻击防范（ATT&CK for Enterprise）和针对移动设备的攻击防范（ATT&CK for Mobile）。方便防御者分类攻击和进行风险评估。    
+作用：目前私人企业、政府以及网络安全产品和服务社区的特定威胁模型和方法都是以ATT&CK知识库为基础开发起来的具体或特定的威胁模型。  
+特点：半年更新一次，具有时效性；内容较为全面，支持他人贡献；免费开放  
+![](images/ATT&CKMatrixforEnterprise.png)   
+使用场景：
+* 入侵者模拟
+* 红队
+* 行为分析开发
+* 防御性缺口评估
+* SOC成熟度评估
+* 网络威胁情报丰富化 
+
+中层模型
+* High Level:[Lockheed Martin Kill Chain](https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html) & Microsoft STRIDE
+   * 宏观、流程、目标
+![](images/THE-CYBER-KILL-CHAIN-body.png)
+* Mid-level Model:[Mitre ATT&CK]()
+   * 提供了非常详细和不断更新的技术信息，比如何种操作、操作之间的关系、操作序列，优点就在于有上下文
+* Low Level Concepts:Exploit & Vulnerability database & models
+   * 具体实例，但缺少对使用者和上下文的描述
 
 2.威胁建模原理
 * [威胁建模-msdn](https://docs.microsoft.com/zh-cn/learn/modules/tm-introduction-to-threat-modeling/1-introduction)  
@@ -114,7 +131,7 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 7.威胁建模要点及步骤
 威胁建模要点：
 * 参考[ATT&CK FAQ](https://attack.mitre.org/resources/faq/)
-* tactics:攻击的理由或目标。包括Initial Access、Execution、Persistence、Privilege Escalation、Defense Evasion、Credential Access、Discovery、Lateral Movement、Collection、Exfiltration、Impact
+* tactics:(以短语的形式笼统描述)攻击的理由或目标。包括Initial Access、Execution、Persistence、Privilege Escalation、Defense Evasion、Credential Access、Discovery、Lateral Movement、Collection、Exfiltration、Impact
 * techniques:攻击者采用什么手段来达到战术目标(笼统)
 * sub-techniques:攻击者采用什么具体手段一步步达到该目标。(具体)
 * procedures:攻击者使用什么样的程序或代码去实现子技术。
@@ -331,3 +348,17 @@ sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
 # 手动next安装完成
 ```
 
+
+# 同学的毕设
+[朱妍欣同学的毕设](https://github.com/YanhuiJessica/Attack-Seaman):实现了知识库的可视化编辑和一键发布。  
+* Attackpatterns:用于增加tactics、techniques、sub-techniques
+* Relationship:用于关联tactics、techniques、sub-techniquesd的关系
+* 初始化数据来源:[不同版本的enterprise/mobile的Attack知识库文件](https://github.com/mitre/cti/)
+* 部署了json文件，用golang编写后端把文件放上去，使用reactadmin框架和mongodb
+* 只有矩阵的个性化编辑，没有进一步的procedures等细节内容
+* 必要性：由于att&ck只是一个抽象且标准的框架，而对于针对性较强的攻防环境需要更为细节和特征化的矩阵图
+# 毕设论文
+* 应该抛开方法将问题本身，准确输出让别人能看懂前因后果
+* 选题依据+心路历程+解决历程+最后方法的裁决
+   * 各种方法的比较分析
+   * 体现思路和思维，深入思考最佳方法
