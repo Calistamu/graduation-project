@@ -144,7 +144,32 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 3. Execute the test procedure  
 4. Analyze your detections of the procedure  
 5. Make improvements to your defenses
+8. 威胁情报标准：从事后（被动）防御变为主动防御
+必要性：降低攻击向量的重复利用率，提供自动化、快速、预先性的防御。
+成熟的威胁情报标准：
+* [Cybox](https://cyboxproject.github.io/):
 
+* [STIX](https://stixproject.github.io/):Structured Threat Information eXpression,结构化威胁信息表达式,基于边缘和节点的图形数据模型。
+  * 节点：SDO,STIX Data Objects,STIX数据对象，包括攻击模式、身份、观察到的数据、威胁行为者、安全漏洞等
+    * 18种
+  * 边缘：SRO，STIX RelationshipObjects,STIX关系对象
+    * 包括relationship和sighting
+  * json和python两种实现方式（Python仅支持STIX2）
+  * TAXII用来传输数据，STIX用作情报分析
+
+* [TAXII](https://taxiiproject.github.io/):Trusted Automated eXchange of Indicator Information,指标信息的可信自动化交换协议，为用户和安全供应商之间提供可靠的、自动化的网络威胁信息交换。
+  * 无需考虑拓扑结构、信任问题、授权管理，转交给更高级别的协议和约定考虑
+  * 支持多种共享模型，比如hub-and-spoke、peer-to-peer、subscribern等
+  * 定义在Http/Https的request/response包中，有模板
+  * 提供四种服务：
+     * inbox service:a TAXII client push informatuion to a TAXII Server.
+     * poll service:a TAXII client request informatuion to a TAXII Server.
+     * Collection Management Service:Used by a TAXII Client to request information about available Data Collections or request a subscription.(Data Collections分为有序（Data Feed）和无序（Data Set))
+     * Discovery Service:Used by a TAXII Client to discover available TAXII Services (e.g., “An Inbox Service is located at http://example.com/inbox_service”).
+  * 数据分发有collection和channel两种方式:
+  ![](images/taxii_diagram.png) 
+
+* MAEC:Malware Attribute Enumeration and Characterization,恶意软件特征枚举和分类
 #### Infection Monkey-An Automated Pentest Tool 
 * 主要针对于数据中心边界及内部服务器安全的检测
 * 参考文献：  
