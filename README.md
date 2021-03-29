@@ -136,7 +136,8 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 * sub-techniques:攻击者采用什么具体手段一步步达到该目标。(具体)
 * procedures:攻击者使用什么样的程序或代码去实现子技术。
    * 技术、子技术都是行为分类后的简称，程序才是具体实施
-
+* mitigations:预防措施
+* detection:
 威胁建模步骤：   
 * 参考文献：[Getting Started with ATT&CK: Adversary Emulation and Red Teaming](https://medium.com/mitre-attack/getting-started-with-attack-red-29f074ccf7e3)
 1. Choose an ATT&CK technique  
@@ -147,7 +148,10 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 8. 威胁情报标准：从事后（被动）防御变为主动防御
 必要性：降低攻击向量的重复利用率，提供自动化、快速、预先性的防御。
 成熟的威胁情报标准：
-* [Cybox](https://cyboxproject.github.io/):
+* [Cybox](https://cyboxproject.github.io/):Cyber Observable eXpression,网络可观测表达式，用以描述可观察对象的网络动态和实体的框架/结构。
+  * 可观察的对象可以是动态的事件，也可以是静态的资产，比如http会话，X509证书、文件、系统配置项等。
+  * 已整合到STIX2.0中
+  ![](images/CybOX-framwork.png)
 
 * [STIX](https://stixproject.github.io/):Structured Threat Information eXpression,结构化威胁信息表达式,基于边缘和节点的图形数据模型。
   * 节点：SDO,STIX Data Objects,STIX数据对象，包括攻击模式、身份、观察到的数据、威胁行为者、安全漏洞等
@@ -169,7 +173,49 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
   * 数据分发有collection和channel两种方式:
   ![](images/taxii_diagram.png) 
 
-* MAEC:Malware Attribute Enumeration and Characterization,恶意软件特征枚举和分类
+* [MAEC](https://maecproject.github.io/):Malware Attribute Enumeration and Characterization,恶意软件特征枚举和分类
+  * 提供一个公认的标准来描述恶意软件，用于根据行为、工件和恶意软件样本之间的关系等属性编码和共享关于恶意软件的高保真信息。
+  * 三大部分：
+    * 恶意软件分析：使用已存恶意软件的相关性，集成且自动化地，使用动态和静态分析，形成MAEC包（概要文件），减少研究人员欸一软件分析工作的重复，且便于更快地开发对策。
+      * [未来会有恶意软件的可视化工具](https://maecproject.github.io/documentation/use_cases/malware_analysis/malware_visualization/)
+      * MAEC作为一种通用的中间层，用于不同恶意软件存储库模式之间的映射，从而使得不同存储库中的分析信息可以共享，允许团队或组织快速利用彼此的分析结果。而且，MAEC还可以对恶意软件属性结构化和标记，进一步改进数据挖掘。比如，分析师可以查询基于MAEC的恶意软件存储库，进一步查找恶意软件动作、行为或能力的实例。
+      * 针对MAEC结构的标准化输出工具：[Utilities & Developer Resources](https://maecproject.github.io/documentation/utils/)
+      * 其中的分析得到的malware behavoir独立为一个project,[MBC（Malware Behavoir Catalog）](https://github.com/MBCProject/mbc-markdown)映射到了Cuckoo community signatures和capa rules中进行使用,以及STIX2中。
+    ![](images/malware-analysis.png)
+    * 网络威胁分析：MAEC对恶意软件实例显示的能力进行标准化编码，从而准确识别恶意软件对组织及其基础设施构成的威胁。
+      * 建立MAEC图形化数据模型来表示恶意软件家族的演变。建立MAEC实体之间的顶级关系来建模，从而可以追踪恶意软件的血统。关于顶级关系建模，使用MAEC为恶意软件实体和家族定义标准属性（比如字符串）来作为关联的要素。
+      * 根据恶意软件的属性来关联攻击者和恶意软件工具集
+      * 会对恶意软件进行评分
+    * 事件整理：基于MAEC数据模型，使用统一的恶意软件报告格式进行描述，从而标准化恶意软件存储库，然后关联事件来管理，增强了与恶意软件相关的事件管理工作。
+      * 使用统一恶意软件报告格式：避免当前市面上的报告都是自由格式且排除了有助于缓解恶意行为危害和分析恶意行为目的的缺陷，对恶意软件进行准确的和明确的报告，减少对恶意软件威胁本质的混淆，提供了额外的功能，比如基于机器的操作和自动获取恶意报告数据。
+      * 不同恶意软件存储库互相映射，共享存储。
+      * 修复：基于整理的恶意软件存储库，能够提供能完整的补救措施，提高系统未来的稳定性。（因为，大多数传统的反病毒工具和实用程序都不能清除检测到的恶意软件实例的每一个痕迹。即使从系统中清除了感染的显式恶意部分，而且恶意部分并不总是能完全清楚，其余部分也可能在未来的扫描中导致误报，潜在地导致补救资源的错误分配）
+   
+   
+  
+
+MITRE：Malware Attribute Enumeration and Characterization，
+* [CAPEC](https://capec.mitre.org/index.html):攻击模式的字典
+  * 与CWE有关
+  * 检索的两种方式：Mechanisms of Attack + Domains of Attack
+  * Mechanisms of Attack:
+    * Engage in Deceptive Interactions
+    * Abuse Existing Functionality
+    * Manipulate Data Structures
+    * Manipulate System Resources
+    * Inject Unexpected Items
+    * Employ Probabilistic Techniques
+    * Manipulate Timing and State
+    * Collect and Analyze Information
+    * Subvert Access Control
+  * Domains of Attack:
+    * Software
+    * Hardware
+    * Communications
+    * Supply Chain
+    * Social Engineering
+    * Physical Security
+* OVAL：Open Vulnerability and Assessment Language,
 #### Infection Monkey-An Automated Pentest Tool 
 * 主要针对于数据中心边界及内部服务器安全的检测
 * 参考文献：  
@@ -295,6 +341,34 @@ sudo apt update
 apt-cache search docker-ce
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
+2. install docker-compose
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+docker-compose version 1.15.0, build e12f3b9
+
+```
+问题：
+1. ```docker-compose --version```的结果是```docker-compose version 1.8.0, build unknown```
+参考[unable to build docker-compose build](https://stackoverflow.com/questions/45978035/unable-to-build-docker-compose-build)  
+解决：
+```
+sudo apt-get purge docker-compose
+sudo curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.15.0/docker-compose-$(uname -s)-$(uname -m)"
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+docker-compose version 1.15.0, build e12f3b9
+```
+2. 执行```docker-compose up```时报错
+```
+ERROR: Couldn't connect to Docker daemon at http+docker://localunixsocket - is it running?
+If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
+```
+
 2. 从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。 
 ![](images/001.png)
 3. Deployment
@@ -326,7 +400,7 @@ service docker restart
 ![](images/004.png)
 
 
-# caldera
+##### caldera
 ```
 git clone https://github.com/mitre/caldera.git 
 pip install -r requirements.txt
@@ -342,6 +416,40 @@ pip install marshmallow_enum
 ```
 python server.py
 ```
+##### Suricata
+```
+sudo apt-get update
+sudo apt-get install libpcre3-dbg libpcre3-dev autoconf automake libtool libpcap-dev libnet1-dev libyaml-dev zlib1g-dev libcap-ng-dev libmagic-dev libjansson-dev libjansson4
+sudo apt-get install libnetfilter-queue-dev libnetfilter-queue1 libnfnetlink-dev
+
+wget http://www.openinfosecfoundation.org/download/suricata-3.1.1.tar.gz
+tar -zxf suricata-3.1.1.tar.gz
+cd suricata-3.1.1/
+./configure --enable-nfqueue --prefix=/usr --sysconfdir=/etc --localstatedir=/var
+make && make install-conf
+
+# Suricata IDS Configurations
+make install-rules
+ls /etc/suricata/rules
+vim /etc/suricata/suricata.yaml
+
+# Using Suricata to Perform Intrusion Detection
+ethtool -K eth0 gro off lro off
+/usr/bin/suricata --list-runmodes
+# start Suricata in pcap live mode
+/usr/bin/suricata -c /etc/suricata/suricata.yaml -i ens160 --init-errors-fatal
+```
+##### Bro/Zeek
+##### 二、准备一个四台主机的内网环境
+微信传不了大文件，我用云盘给你吧  https://drive.google.com/file/d/1wq3VGmivYIR0pZZ7adZruBvjTFIhxiKV/view?usp=sharing
+
+我给的几个靶标环境都是用docker-compose跑的
+
+虚拟网络结构那部分需要借助Open vSwitch配置虚拟网卡，我那天听黄老师意思这部分你们自己实现也行？docker双网卡、virtualbox网络配置应该都能实现相同效果的。你先试试每个靶标吧，如果需要ovs配置的话，我再发给你
+
+没事，你先下载跑跑看看，里面可能有依赖到内网资源的，和我说一下
+
+##### 写自己的IDS
 ##### ubuntu16.04LTS安装vmware和virtualbox
 [virtualbox官网](https://www.virtualbox.org/)下载virtualbox-6.1_6.1.18-142142_Ubuntu_xenial_amd64.deb，并使用scp拷贝到ubuntu虚拟机中，重命名为virtualbox.deb。
 ```
@@ -373,13 +481,18 @@ sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
 # 手动next安装完成
 ```
 
-
-# 同学的毕设
+##### 实验问题
+1. 执行```sudo apt-get```的时候报错```Unable to lock directory /var/lib/apt/lists/```
+解决：执行```sudo rm /var/lib/apt/lists/lock```
+##### 实验总结
+##### 参考文献
+MITRE ATT&CK:Design and Philosophy
+##### 同学的毕设
 [朱妍欣同学的毕设](https://github.com/YanhuiJessica/Attack-Seaman):实现了知识库的可视化编辑和一键发布。  
 * Attackpatterns:用于增加tactics、techniques、sub-techniques
 * Relationship:用于关联tactics、techniques、sub-techniquesd的关系
 * 初始化数据来源:[不同版本的enterprise/mobile的Attack知识库文件](https://github.com/mitre/cti/)
-* 部署了json文件，用golang编写后端把文件放上去，使用reactadmin框架和mongodb
+* 基于[ATT&CK Navigator](https://github.com/mitre-attack/attack-navigator#Install-and-Run),修改了数据文件，重新部署了json文件，用golang编写后端把文件放上去，使用[reactadmin框架](https://github.com/Liberxue/ReactAdmin)和mongodb
 * 只有矩阵的个性化编辑，没有进一步的procedures等细节内容
 * 必要性：由于att&ck只是一个抽象且标准的框架，而对于针对性较强的攻防环境需要更为细节和特征化的矩阵图
 # 毕设论文
