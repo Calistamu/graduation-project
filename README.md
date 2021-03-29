@@ -276,25 +276,53 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 #### 参考文献
 [ATT&CK](https://attack.mitre.org)
 
-## 实验进展
+## 实验进展-中期
 ### 实验要求
-- [] 模拟运行攻击方工具，明确其工作方式原理，测试防御方防御能力。
-- [] 熟悉ATT&CK框架，利用Suricata和Bro/Zeek写威胁检测脚本。
-- [] 进阶非必要，熟悉ids编写原理，甚至写一个自己的ids，完成一个较为成熟的威胁建模。
-
-- [] 借助攻击方模拟工具，完成自动化/半自动化的内网渗透/信息收集/资产获取
 - [] 模拟运行一个攻击方工具
+  * Infection Monkey
+  * Suricata 
+  * Bro/Zeek
 - [] 搭建一个内网环境
-- [] 使用攻击方工具进行内网渗透/信息收集/资产获取
+- [] 使用攻击方模拟工具，完成自动化/把自动化的内网渗透/信息收集/资产获取
 ### 实验成果
 - [] 完整实验演示录屏（包括模拟工具的安装使用+攻击方模拟运行+威胁建模过程+防御措施使用过程及最终效果）
 - [] 威胁建模的代码或工具
 
 ### 实验环境
-ubuntu 16.04 TLS amd64
+ubuntu 16.04 TLS amd64+docker+docker-compose
 ### 实验步骤
-##### 一、模拟运行[Infection Monkey](https://www.guardicore.com/infectionmonkey/)
-1. 安装下载docker
+##### 一、模拟运行攻击方工具
+0. Install vmware and virtualbox on ubuntu 16.04 LTS(没用到虚拟机)
+[virtualbox官网](https://www.virtualbox.org/)下载virtualbox-6.1_6.1.18-142142_Ubuntu_xenial_amd64.deb，并使用scp拷贝到ubuntu虚拟机中，重命名为virtualbox.deb。
+```
+sudo apt-get install  libqt5x11extras5 libsdl1.2debian
+sudo dpkg -i virtualbox.deb
+sudo virtualbox
+```
+* 参考[ubuntu 16.04下安装VMware-Workstation-12/14详细步骤](https://blog.51cto.com/337962/2095824)
+```
+# 安装开发工具
+sudo apt install build-essential\
+
+# 安装axel，使用axel下载vmware
+# (-n 选项指定线程的数目)
+sudo apt-get install axel
+axel -n 100 https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-12.1.1-3770994.x86_64.bundle 
+# 赋予权限
+chmod +x VMware-Workstation-Full-12.1.1-3770994.x86_64.bundle
+# 安装组件
+sudo apt-get install murrine-themes
+sudo apt-get install gtk2-engines-murrine
+sudo apt-get install libgtkmm-2.4-1c2a(libgtkmm-2.4-1v5:i386套件的其中之一)
+sudo apt-get install libgtkmm-2.4-dev
+sudo apt-get install libcanberra-gtk-module:i386
+sudo apt-get install gnome-tweak-tool
+sudo apt-get install gksu
+# install
+sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
+# 手动next安装完成
+```
+1. Install Docker
 * 参考[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
 ```
@@ -341,7 +369,7 @@ sudo apt update
 apt-cache search docker-ce
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
-2. install docker-compose
+2. Install Docker-compose
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
@@ -369,9 +397,9 @@ ERROR: Couldn't connect to Docker daemon at http+docker://localunixsocket - is i
 If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
 ```
 
-2. 从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。 
+3. Install [Infection Monkey](https://www.guardicore.com/infectionmonkey/)
+从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。 
 ![](images/001.png)
-3. Deployment
 ```
 sudo docker load -i dk.monkeyisland.1.9.0.tar
 sudo docker pull mongo
@@ -393,14 +421,14 @@ sudo vim /etc/docker/daemon.json
 
 service docker restart
 ```
-4. Usage
+Use Infection Monkey
 访问https://<server-ip>:5000  
 ![](images/003.png)
 注册用户名和密码后，进入使用页面  
 ![](images/004.png)
 
 
-##### caldera
+##### Install caldera
 ```
 git clone https://github.com/mitre/caldera.git 
 pip install -r requirements.txt
@@ -416,7 +444,7 @@ pip install marshmallow_enum
 ```
 python server.py
 ```
-##### Suricata
+##### Install Suricata
 ```
 sudo apt-get update
 sudo apt-get install libpcre3-dbg libpcre3-dev autoconf automake libtool libpcap-dev libnet1-dev libyaml-dev zlib1g-dev libcap-ng-dev libmagic-dev libjansson-dev libjansson4
@@ -439,7 +467,10 @@ ethtool -K eth0 gro off lro off
 # start Suricata in pcap live mode
 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i ens160 --init-errors-fatal
 ```
-##### Bro/Zeek
+##### Install Bro/Zeek
+```
+
+```
 ##### 二、准备一个四台主机的内网环境
 微信传不了大文件，我用云盘给你吧  https://drive.google.com/file/d/1wq3VGmivYIR0pZZ7adZruBvjTFIhxiKV/view?usp=sharing
 
@@ -448,46 +479,15 @@ ethtool -K eth0 gro off lro off
 虚拟网络结构那部分需要借助Open vSwitch配置虚拟网卡，我那天听黄老师意思这部分你们自己实现也行？docker双网卡、virtualbox网络配置应该都能实现相同效果的。你先试试每个靶标吧，如果需要ovs配置的话，我再发给你
 
 没事，你先下载跑跑看看，里面可能有依赖到内网资源的，和我说一下
+##### 三、用攻击方模拟工具自动检测内网环境
+##### 四、写自己的IDS
 
-##### 写自己的IDS
-##### ubuntu16.04LTS安装vmware和virtualbox
-[virtualbox官网](https://www.virtualbox.org/)下载virtualbox-6.1_6.1.18-142142_Ubuntu_xenial_amd64.deb，并使用scp拷贝到ubuntu虚拟机中，重命名为virtualbox.deb。
-```
-sudo apt-get install  libqt5x11extras5 libsdl1.2debian
-sudo dpkg -i virtualbox.deb
-sudo virtualbox
-```
-* 参考[ubuntu 16.04下安装VMware-Workstation-12/14详细步骤](https://blog.51cto.com/337962/2095824)
-```
-# 安装开发工具
-sudo apt install build-essential\
-
-# 安装axel，使用axel下载vmware
-# (-n 选项指定线程的数目)
-sudo apt-get install axel
-axel -n 100 https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-12.1.1-3770994.x86_64.bundle 
-# 赋予权限
-chmod +x VMware-Workstation-Full-12.1.1-3770994.x86_64.bundle
-# 安装组件
-sudo apt-get install murrine-themes
-sudo apt-get install gtk2-engines-murrine
-sudo apt-get install libgtkmm-2.4-1c2a(libgtkmm-2.4-1v5:i386套件的其中之一)
-sudo apt-get install libgtkmm-2.4-dev
-sudo apt-get install libcanberra-gtk-module:i386
-sudo apt-get install gnome-tweak-tool
-sudo apt-get install gksu
-# install
-sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
-# 手动next安装完成
-```
 
 ##### 实验问题
 1. 执行```sudo apt-get```的时候报错```Unable to lock directory /var/lib/apt/lists/```
 解决：执行```sudo rm /var/lib/apt/lists/lock```
 ##### 实验总结
-##### 参考文献
-MITRE ATT&CK:Design and Philosophy
-##### 同学的毕设
+###### 同学的毕设
 [朱妍欣同学的毕设](https://github.com/YanhuiJessica/Attack-Seaman):实现了知识库的可视化编辑和一键发布。  
 * Attackpatterns:用于增加tactics、techniques、sub-techniques
 * Relationship:用于关联tactics、techniques、sub-techniquesd的关系
@@ -495,7 +495,11 @@ MITRE ATT&CK:Design and Philosophy
 * 基于[ATT&CK Navigator](https://github.com/mitre-attack/attack-navigator#Install-and-Run),修改了数据文件，重新部署了json文件，用golang编写后端把文件放上去，使用[reactadmin框架](https://github.com/Liberxue/ReactAdmin)和mongodb
 * 只有矩阵的个性化编辑，没有进一步的procedures等细节内容
 * 必要性：由于att&ck只是一个抽象且标准的框架，而对于针对性较强的攻防环境需要更为细节和特征化的矩阵图
-# 毕设论文
+##### 参考文献
+MITRE ATT&CK:Design and Philosophy
+
+## 实验总结-结项
+### 毕设论文要求
 * 应该抛开方法将问题本身，准确输出让别人能看懂前因后果
 * 选题依据+心路历程+解决历程+最后方法的裁决
    * 各种方法的比较分析
