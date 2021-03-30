@@ -128,8 +128,8 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 * Cobalt Strike：Cobalt Strike是Armitage商业版，Armitage是一款Java写的Metasploit图形界面的攻击软件，可以用它结合Metasploit已知的攻击来针对存在的漏洞自动化攻击  
 * Cymulate：Cymulate主要是针对以下场景进行攻击模拟，例如模拟攻击WAF、模拟攻击邮箱、DLP攻击测试、SOC模拟测试、邮箱测试、勒索软件测试、木马、Payload渗透攻击测试等。这类测试的主要目的是完善产品、丰富员工的安全意识，以及相应的攻击技术能力检测和提升。举个例子，利用邮箱以及可以统计钓鱼攻击有多少用户中招。
 * Immunity Adversary Simulation:该平台允许你从基础架构内建立高级永久性攻击模型，并评估安全团队如何应对网络上活跃的真实攻击。
-7.威胁建模要点及步骤
-威胁建模要点：
+7. ATT&CK深度学习
+ATT&CK结构
 * 参考[ATT&CK FAQ](https://attack.mitre.org/resources/faq/)
 * tactics:(以短语的形式笼统描述)攻击的理由或目标。包括Initial Access、Execution、Persistence、Privilege Escalation、Defense Evasion、Credential Access、Discovery、Lateral Movement、Collection、Exfiltration、Impact
 * techniques:攻击者采用什么手段来达到战术目标(笼统)
@@ -137,7 +137,18 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 * procedures:攻击者使用什么样的程序或代码去实现子技术。
    * 技术、子技术都是行为分类后的简称，程序才是具体实施
 * mitigations:预防措施
-* detection:
+* detection:基于TTP
+
+ATT&CK两大功能
+* 对于攻防双方均有益处。让红队的攻击更完善有效，甚至促进创新。让蓝队更了解攻击者，进一步评估当前控制防御系统的能力。
+* 评估：协助防御方更加结构化地检测控制威胁，比如明确威胁分析着手点，划分优先级，危害等级评估，以及确定相关检测技术等
+* 强化：ATT&CK提供技术细节来促进攻防队伍采取更好的战术或技术，以及帮助防守方建立自动监控规则和全天候的威胁狩猎
+
+ATT&CK相关资源
+* [官网](https://attack.mitre.org)
+* [ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/enterprise/)用以设置个性化的ATT&CKweb页面---朱妍欣同学的实验
+* 相关可编程使用：STIX+TAXII
+
 威胁建模步骤：   
 * 参考文献：[Getting Started with ATT&CK: Adversary Emulation and Red Teaming](https://medium.com/mitre-attack/getting-started-with-attack-red-29f074ccf7e3)
 1. Choose an ATT&CK technique  
@@ -145,6 +156,7 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
 3. Execute the test procedure  
 4. Analyze your detections of the procedure  
 5. Make improvements to your defenses
+
 8. 威胁情报标准：从事后（被动）防御变为主动防御
 必要性：降低攻击向量的重复利用率，提供自动化、快速、预先性的防御。
 成熟的威胁情报标准：
@@ -190,10 +202,6 @@ HIDS通过检查操作系统创建的日志、查找对关键系统文件的更�
       * 使用统一恶意软件报告格式：避免当前市面上的报告都是自由格式且排除了有助于缓解恶意行为危害和分析恶意行为目的的缺陷，对恶意软件进行准确的和明确的报告，减少对恶意软件威胁本质的混淆，提供了额外的功能，比如基于机器的操作和自动获取恶意报告数据。
       * 不同恶意软件存储库互相映射，共享存储。
       * 修复：基于整理的恶意软件存储库，能够提供能完整的补救措施，提高系统未来的稳定性。（因为，大多数传统的反病毒工具和实用程序都不能清除检测到的恶意软件实例的每一个痕迹。即使从系统中清除了感染的显式恶意部分，而且恶意部分并不总是能完全清楚，其余部分也可能在未来的扫描中导致误报，潜在地导致补救资源的错误分配）
-   
-   
-  
-
 MITRE：Malware Attribute Enumeration and Characterization，
 * [CAPEC](https://capec.mitre.org/index.html):攻击模式的字典
   * 与CWE有关
@@ -215,7 +223,7 @@ MITRE：Malware Attribute Enumeration and Characterization，
     * Supply Chain
     * Social Engineering
     * Physical Security
-* OVAL：Open Vulnerability and Assessment Language,
+* [OVAL](https://oval.mitre.org/)：Open Vulnerability and Assessment Language,
 #### Infection Monkey-An Automated Pentest Tool 
 * 主要针对于数据中心边界及内部服务器安全的检测
 * 参考文献：  
@@ -278,6 +286,11 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 
 ## 实验进展-中期
 ### 实验要求
+- [x] 深度学习ATT&CK+威胁情报四大成熟产品+MITRE公司旗下项目+紫队模拟中的概念
+  * ATT&CK：《MITRE ATT&CK:Design and Philosophy》
+  * 威胁情报四大成熟产品：CybOX+STIX+TAXII+MAEC
+  * MITRE:CAPEC+OVAL+CVE(CVSS) vs CWE(CWSS+CWRAF)
+  * 紫队模拟中的概念：TARA+SIEM+MSS+UBEA+SOAR+EDR+CTI+IPDRR
 - [] 模拟运行一个攻击方工具
   * Infection Monkey
   * Suricata 
@@ -391,11 +404,7 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose --version
 docker-compose version 1.15.0, build e12f3b9
 ```
-2. 执行```docker-compose up```时报错
-```
-ERROR: Couldn't connect to Docker daemon at http+docker://localunixsocket - is it running?
-If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
-```
+
 
 3. Install [Infection Monkey](https://www.guardicore.com/infectionmonkey/)
 从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。 
@@ -473,6 +482,16 @@ ethtool -K eth0 gro off lro off
 ```
 ##### 二、准备一个四台主机的内网环境
 微信传不了大文件，我用云盘给你吧  https://drive.google.com/file/d/1wq3VGmivYIR0pZZ7adZruBvjTFIhxiKV/view?usp=sharing
+```
+sudo docker-compose up
+```
+更改.yml文件
+biubiu-s2-007：
+```
+poc:registry.cn-beijing.aliyuncs.com/shawnsky/poc-config-env:v1
+config:registry.cn-beijing.aliyuncs.com/shawnsky/poc-config-env:v1
+ids:shawnsky/zeek:alpine
+```
 
 我给的几个靶标环境都是用docker-compose跑的
 
