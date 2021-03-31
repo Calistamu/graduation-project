@@ -335,9 +335,10 @@ sudo apt-get install gksu
 sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
 # 手动next安装完成
 ```
-1. Install Docker
+1. Install Docker and Docker Compose
 * 参考[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
+Install Docker
 ```
 1. Update the apt package index and install packages to allow apt to use a repository over HTTPS:
 $ sudo apt-get update
@@ -382,7 +383,7 @@ sudo apt update
 apt-cache search docker-ce
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
-2. Install Docker-compose
+Install Docker-compose
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
@@ -392,8 +393,7 @@ docker-compose --version
 docker-compose version 1.15.0, build e12f3b9
 
 ```
-问题：
-1. ```docker-compose --version```的结果是```docker-compose version 1.8.0, build unknown```
+执行```docker-compose --version```的结果是```docker-compose version 1.8.0, build unknown```
 参考[unable to build docker-compose build](https://stackoverflow.com/questions/45978035/unable-to-build-docker-compose-build)  
 解决：
 ```
@@ -454,6 +454,8 @@ pip install marshmallow_enum
 python server.py
 ```
 ##### Install Suricata
+* [How To Install And Setup Suricata IDS On Ubuntu Linux 16.04](https://www.unixmen.com/install-suricata-ids-on-ubuntu-16-04/)
+* [Suricata-Installation](https://suricata.readthedocs.io/en/suricata-6.0.0/install.html)
 ```
 sudo apt-get update
 sudo apt-get install libpcre3-dbg libpcre3-dev autoconf automake libtool libpcap-dev libnet1-dev libyaml-dev zlib1g-dev libcap-ng-dev libmagic-dev libjansson-dev libjansson4
@@ -463,10 +465,11 @@ wget http://www.openinfosecfoundation.org/download/suricata-3.1.1.tar.gz
 tar -zxf suricata-3.1.1.tar.gz
 cd suricata-3.1.1/
 ./configure --enable-nfqueue --prefix=/usr --sysconfdir=/etc --localstatedir=/var
-make && make install-conf
+sudo make 
+sudo make install-conf
 
 # Suricata IDS Configurations
-make install-rules
+sudo make install-rules
 ls /etc/suricata/rules
 vim /etc/suricata/suricata.yaml
 
@@ -478,26 +481,89 @@ ethtool -K eth0 gro off lro off
 ```
 ##### Install Bro/Zeek
 ```
+sudo apt-get update
 
+# Install Required Packages
+sudo apt-get install cmake make gcc g++ flex git bison python-dev swig libgeoip-dev libpcap-dev libssl-dev zlib1g-dev -y libgeoip-dev -y
+
+# Download both the IPv4 and IPv6 databases
+wget https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoLiteCity.dat.gz/2ec4a73cd879adddf916df479f3581c7/GeoLiteCity.dat.gz
+wget https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz
+gzip -d GeoLiteCity.dat.gz
+gzip -d GeoLiteCityv6.dat.gz
+sudo mv GeoLiteCity.dat /usr/share/GeoIP/GeoIPCity.dat
+sudo mv GeoLiteCityv6.dat /usr/share/GeoIP/GeoIPCityv6.dat
+
+# Installing Bro From Source
+sudo git clone --recursive git://git.bro.org/bro
+cd bro
+sudo git submodule update --recursive --init 
+./configure
+make
+sudo make install
 ```
 ##### 二、准备一个四台主机的内网环境
 微信传不了大文件，我用云盘给你吧  https://drive.google.com/file/d/1wq3VGmivYIR0pZZ7adZruBvjTFIhxiKV/view?usp=sharing
 ```
 sudo docker-compose up
 ```
-更改.yml文件
-biubiu-s2-007：
+1. biubiu-s2-007：
 ```
-poc:registry.cn-beijing.aliyuncs.com/shawnsky/poc-config-env:v1
-config:registry.cn-beijing.aliyuncs.com/shawnsky/poc-config-env:v1
-ids:shawnsky/zeek:alpine
+# 修改.yml的pull地址
+
+  build:
+    image: registry.cn-beijing.aliyuncs.com/shawnsky/biubiu-s2-007:base-v1
+
+  config:
+    image: registry.cn-beijing.aliyuncs.com/shawnsky/
+
+  poc:
+    image: registry.cn-beijing.aliyuncs.com/shawnsky/
+
+  ids:
+    image: shawnsky/zeek:alpine
 ```
+2. GrandNode:
+解决```ERROR: Get https://hub.a101e.lab/v2/: dial tcp: lookup hub.a101e.lab on 127.0.1.1:53: no such host```
+执行```./docker-compose_up.sh```时，出现报错
+```
+ERROR: Version in "./docker-compose.yml" is unsupported. You might be seeing this error because you're using the wrong Compose file version. Either specify a supported version (e.g "2.2" or "3.3") and place your service definitions under the `services` key, or omit the `version` key and place your service definitions at the root of the file to use version 1.
+For more on the Compose file format versions, see https://docs.docker.com/compose/compose-file/
+```
+解决：参考[Compose file](https://docs.docker.com/compose/compose-file/)可以看到version为3.4的docker-compose需要的docker引擎是17.09.0+,当前的版本信息如下：
+```
+docker --version
+Docker version 20.10.5, build 55c4c88
+docker-compose --version
+docker-compose version 1.15.0, build e12f3b9
+```
+重新下载docker-compose
+```
+# uninstall docker-compose
+sudo rm /usr/local/bin/docker-compose
+pip uninstall docker-compose
 
-我给的几个靶标环境都是用docker-compose跑的
-
+# install docker-compose
+sudo curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/run.sh -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+3. misskey-11.20.1
+No Change
+4. oa_shiro_url
+```
+# delete following content
+def:
+  build:
+    context:./def
+    dockerfile:Dockerfile
+  network_mode:service:web
+  container_name:oa-shiro-url-def-zeek
+  entrypoint:/entrypoint.sh
+# sudo docker-compose up
+```
+5. 借助Open vSwitch配置虚拟网卡，docker双网卡，ovs配置
 虚拟网络结构那部分需要借助Open vSwitch配置虚拟网卡，我那天听黄老师意思这部分你们自己实现也行？docker双网卡、virtualbox网络配置应该都能实现相同效果的。你先试试每个靶标吧，如果需要ovs配置的话，我再发给你
 
-没事，你先下载跑跑看看，里面可能有依赖到内网资源的，和我说一下
 ##### 三、用攻击方模拟工具自动检测内网环境
 ##### 四、写自己的IDS
 
