@@ -45,7 +45,7 @@ Design and Implementation of Linux Red Team Adversary Emulation Tools
 * High Level:[Lockheed Martin Kill Chain](https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html) & Microsoft STRIDE
    * 宏观、流程、目标
 ![](images/THE-CYBER-KILL-CHAIN-body.png)
-* Mid-level Model:[Mitre ATT&CK]()
+* Mid-level Model:[Mitre ATT&CK](https://attack.mitre.org/)
    * 提供了非常详细和不断更新的技术信息，比如何种操作、操作之间的关系、操作序列，优点就在于有上下文
 * Low Level Concepts:Exploit & Vulnerability database & models
    * 具体实例，但缺少对使用者和上下文的描述
@@ -188,17 +188,17 @@ ATT&CK相关资源
 * [MAEC](https://maecproject.github.io/):Malware Attribute Enumeration and Characterization,恶意软件特征枚举和分类
   * 提供一个公认的标准来描述恶意软件，用于根据行为、工件和恶意软件样本之间的关系等属性编码和共享关于恶意软件的高保真信息。
   * 三大部分：
-    * 恶意软件分析：使用已存恶意软件的相关性，集成且自动化地，使用动态和静态分析，形成MAEC包（概要文件），减少研究人员欸一软件分析工作的重复，且便于更快地开发对策。
+    * 一、恶意软件分析：使用已存恶意软件的相关性，集成且自动化地，使用动态和静态分析，形成MAEC包（概要文件），减少研究人员欸一软件分析工作的重复，且便于更快地开发对策。
       * [未来会有恶意软件的可视化工具](https://maecproject.github.io/documentation/use_cases/malware_analysis/malware_visualization/)
       * MAEC作为一种通用的中间层，用于不同恶意软件存储库模式之间的映射，从而使得不同存储库中的分析信息可以共享，允许团队或组织快速利用彼此的分析结果。而且，MAEC还可以对恶意软件属性结构化和标记，进一步改进数据挖掘。比如，分析师可以查询基于MAEC的恶意软件存储库，进一步查找恶意软件动作、行为或能力的实例。
       * 针对MAEC结构的标准化输出工具：[Utilities & Developer Resources](https://maecproject.github.io/documentation/utils/)
       * 其中的分析得到的malware behavoir独立为一个project,[MBC（Malware Behavoir Catalog）](https://github.com/MBCProject/mbc-markdown)映射到了Cuckoo community signatures和capa rules中进行使用,以及STIX2中。
     ![](images/malware-analysis.png)
-    * 网络威胁分析：MAEC对恶意软件实例显示的能力进行标准化编码，从而准确识别恶意软件对组织及其基础设施构成的威胁。
+    * 二、网络威胁分析：MAEC对恶意软件实例显示的能力进行标准化编码，从而准确识别恶意软件对组织及其基础设施构成的威胁。
       * 建立MAEC图形化数据模型来表示恶意软件家族的演变。建立MAEC实体之间的顶级关系来建模，从而可以追踪恶意软件的血统。关于顶级关系建模，使用MAEC为恶意软件实体和家族定义标准属性（比如字符串）来作为关联的要素。
       * 根据恶意软件的属性来关联攻击者和恶意软件工具集
       * 会对恶意软件进行评分
-    * 事件整理：基于MAEC数据模型，使用统一的恶意软件报告格式进行描述，从而标准化恶意软件存储库，然后关联事件来管理，增强了与恶意软件相关的事件管理工作。
+    * 三、事件整理：基于MAEC数据模型，使用统一的恶意软件报告格式进行描述，从而标准化恶意软件存储库，然后关联事件来管理，增强了与恶意软件相关的事件管理工作。
       * 使用统一恶意软件报告格式：避免当前市面上的报告都是自由格式且排除了有助于缓解恶意行为危害和分析恶意行为目的的缺陷，对恶意软件进行准确的和明确的报告，减少对恶意软件威胁本质的混淆，提供了额外的功能，比如基于机器的操作和自动获取恶意报告数据。
       * 不同恶意软件存储库互相映射，共享存储。
       * 修复：基于整理的恶意软件存储库，能够提供能完整的补救措施，提高系统未来的稳定性。（因为，大多数传统的反病毒工具和实用程序都不能清除检测到的恶意软件实例的每一个痕迹。即使从系统中清除了感染的显式恶意部分，而且恶意部分并不总是能完全清楚，其余部分也可能在未来的扫描中导致误报，潜在地导致补救资源的错误分配）
@@ -435,8 +435,6 @@ Use Infection Monkey
 ![](images/003.png)
 注册用户名和密码后，进入使用页面  
 ![](images/004.png)
-
-
 ##### Install caldera
 ```
 git clone https://github.com/mitre/caldera.git 
@@ -589,3 +587,36 @@ MITRE ATT&CK:Design and Philosophy
 * 选题依据+心路历程+解决历程+最后方法的裁决
    * 各种方法的比较分析
    * 体现思路和思维，深入思考最佳方法
+
+## 中期答辩
+### 答辩中心
+* 确认目前毕设进展是否符合开题报告时的计划---符合
+* 确认是否可以按时按质量完成论文---能
+### 答辩内容
+#### 一、开题目标复查
+#### 二、中期进度汇报---理论介绍
+#### 三、中期成果演示---实操视频
+##### 进度汇报
+* 论文完成度---背景理论知识+毕设实验过程+思路分析总结---70%
+* 实验完成度---70%
+##### 四、结项成果总结
+### 实验要求
+- [x] 深度学习ATT&CK+威胁情报四大成熟产品+MITRE公司旗下项目+紫队模拟中的概念
+  * ATT&CK：《MITRE ATT&CK:Design and Philosophy》
+  * 威胁情报四大成熟产品：CybOX+STIX+TAXII+MAEC
+  * MITRE:CAPEC+OVAL+CVE(CVSS) vs CWE(CWSS+CWRAF)
+  * 紫队模拟中的概念：TARA+SIEM+MSS+UBEA+SOAR+EDR+CTI+IPDRR
+- [x] 模拟运行一个攻击方工具
+  * Infection Monkey
+  * Suricata 
+  * Bro/Zeek
+- [] 搭建一个内网环境
+  * docker-compose实现四个靶标
+  * open vSwitchshi实现虚拟网络
+- [] 使用攻击方模拟工具，针对现成内网环境，完成自动化/把自动化的内网渗透/信息收集/资产获取 
+### 实验成果
+- [] 完整实验演示录屏（包括模拟工具的安装使用+攻击方模拟运行+威胁建模过程+防御措施使用过程及最终效果）
+- [] 有详细步骤+思路分析+问题解决的实验操作报告
+- [] 实验场景设计文档
+- [] 毕设论文
+
