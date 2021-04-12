@@ -285,11 +285,10 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 ### 十六、参考文献
 [ATT&CK](https://attack.mitre.org)
 
-## 中期答辩
-### 答辩中心
+## 中期
+### 中期答辩
 * 确认目前毕设进展是否符合开题报告时的计划---符合
 * 确认是否可以按时按质量完成论文---能
-### 答辩内容
 #### 一、开题目标复查
 ##### 实验要求
 - [x] 深度学习ATT&CK+威胁情报四大成熟产品+MITRE公司旗下项目+紫队模拟中的概念
@@ -313,13 +312,35 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 #### 三、中期成果演示---实操视频
 > videos/中期答辩演示视频.mp4
 ##### 四、结项成果总结
-### 实验成果
+### 实验成果汇报
 - [] 完整实验演示录屏（包括模拟工具的安装使用+攻击方模拟运行+威胁建模过程+防御措施使用过程及最终效果）
 - [] 有详细步骤+思路分析+问题解决的实验操作报告
 - [] 实验场景设计文档
 - [] 毕设论文
 ##### 五、参考文献
 MITRE ATT&CK:Design and Philosophy
+
+### 中期理论拓展
+#### （一） 数据库
+##### 1. redis
+##### 2. mysql
+
+##### 3. mongodb
+#### (二) IDS
+##### 1. IDS
+##### 2.Zeek
+* [docker-zeek](https://github.com/blacktop/docker-zeek)
+
+#### (三)虚拟化
+##### veth network
+veth:Vitual Ethernet Device
+* 为container所建,成对出现
+* 作用是把一个network namespace发出的数据包转发到另一个namespace，veth设备充当了连接两个network namespace的一根虚拟网线的作用。
+
+#### (四) CVE+CVSS
+##### 1.CVE
+
+##### 2.CVSS
 ## 结项
 ### 毕设论文要求
 * 应该抛开方法将问题本身，准确输出让别人能看懂前因后果
@@ -341,7 +362,7 @@ MITRE ATT&CK:Design and Philosophy
 ### 实验环境
 ubuntu 16.04 TLS amd64+docker+docker-compose
 ### 实验步骤
-##### 一、模拟运行攻击方工具
+#### 一、模拟运行攻击方工具
 0. Install vmware and virtualbox on ubuntu 16.04 LTS(没用到虚拟机)
 [virtualbox官网](https://www.virtualbox.org/)下载virtualbox-6.1_6.1.18-142142_Ubuntu_xenial_amd64.deb，并使用scp拷贝到ubuntu虚拟机中，重命名为virtualbox.deb。
 ```
@@ -472,7 +493,7 @@ Use Infection Monkey
 ![](images/003.png)
 注册用户名和密码后，进入使用页面  
 ![](images/004.png)
-##### Install caldera
+4. Install caldera
 ```
 git clone https://github.com/mitre/caldera.git 
 pip install -r requirements.txt
@@ -488,7 +509,7 @@ pip install marshmallow_enum
 ```
 python server.py
 ```
-##### Install Suricata
+5. Install Suricata
 * [How To Install And Setup Suricata IDS On Ubuntu Linux 16.04](https://www.unixmen.com/install-suricata-ids-on-ubuntu-16-04/)
 * [Suricata-Installation](https://suricata.readthedocs.io/en/suricata-6.0.0/install.html)
 ```
@@ -514,7 +535,7 @@ ethtool -K eth0 gro off lro off
 # start Suricata in pcap live mode
 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i ens160 --init-errors-fatal
 ```
-##### Install Bro/Zeek
+6. Install Bro/Zeek
 ```
 sudo apt-get update
 
@@ -537,17 +558,20 @@ sudo git submodule update --recursive --init
 make
 sudo make install
 ```
-##### 二、准备一个四台靶机的靶场环境
+#### 二、准备一个四台靶机的靶场环境
 
-###### DVE-1 misskey-11.20.1
-BUID FEATURES：
+##### DVE-1 misskey-11.20.1---CVE-2019-1020010
+###### BUID FEATURES：
+* db: redis 4.0.4
+* ids: zeek:alpine
+###### Writeup
+1. 
+##### DVE-2 oa_shiro_url---CVE-2016-4437
 
-Writeup
-###### DVE-2 oa_shiro_url
-
-BUILD FEATURES：
-
-Writeup:
+###### BUILD FEATURES：
+* db: mysql 5.6
+* ids: zeek:alpine
+###### Writeup
 
 Change:
 
@@ -562,9 +586,10 @@ def:
   entrypoint:/entrypoint.sh
 # sudo docker-compose up
 ```
-###### DVE-3 biubiu-s2-007：
+##### DVE-3 biubiu-s2-007---jumpserver
 BUILD FEATURES:
-
+* db: mysql 5.6.48
+* ids: zeek:alpine
 Writeup:
 
 Change:
@@ -583,9 +608,11 @@ Change:
   ids:
     image: shawnsky/zeek:alpine
 ```
-###### DVE-4 GrandNode:
-BUILD FEATURES:
-Writeup:
+##### DVE-4 GrandNode---CVE-2019-12276
+###### BUILD FEATURES:
+* db:mongo
+* ids:zeek:alpine
+###### Writeup:
 
 Problems:
 执行```./docker-compose_up.sh```时，出现报错
@@ -622,8 +649,9 @@ DB Schema 7.12.1
 
 ```
 6. 网络连通性部署
-
-##### 三、用攻击方模拟工具自动检测内网环境
+```brctl show```查看veth设备与各个网桥的连接情况，四个靶机都成功运行时的连接情况如下图所示。  
+![](images/veth-connection.png)
+#### 三、用攻击方模拟工具自动检测内网环境
 1. Intsall Metasploit Framework
 * [metasploit-framework=github](https://github.com/rapid7/metasploit-framework)
 ```
@@ -656,10 +684,16 @@ sudo apt-get update
 # install Oracle JDK 8
 sudo apt-get install oracle-java8-installer
 ```
-##### 四、写自己的IDS
+#### 四、写自己的自动化攻击脚本
+
+#### 五、场景设计总结
 
 
-##### 实验问题
+#### 六、实验问题
+
+#### 七、演示视频
+
+#### 八、参考文献
 
 
 
