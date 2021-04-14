@@ -493,21 +493,50 @@ Use Infection Monkey
 ![](images/003.png)
 注册用户名和密码后，进入使用页面  
 ![](images/004.png)
+
 4. Install caldera
 ```
-git clone https://github.com/mitre/caldera.git 
-pip install -r requirements.txt
+git clone https://github.com/mitre/caldera.git --recursive --branch 3.0.0
+cd caldera
+pip3 install -r requirements.txt
+python3 server.py --insecure
+```
+```http://localhost:8888```
+5. Install Cobalt Strike 
+```
 
-pip install aiohttp
-pip install aiohttp_jinja2
-pip install aiohttp_security
-pip install aiohttp_session
-pip install idap3
-pip install marshmallow_enum
 ```
-* AttributeError: module 'marshmallow' has no attribute 'INCLUDE'
+6. Intsall Metasploit Framework
+* [metasploit-framework=github](https://github.com/rapid7/metasploit-framework)
 ```
-python server.py
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && \
+  chmod 755 msfinstall && \
+  ./msfinstall
+
+# To check to see if the database was set up
+db_status
+# To enable and start using the local database
+msfdb init
+
+msfconsole --version
+# Framework Version: 6.0.40-dev-
+``` 
+7. Install java
+```
+# Installing the Default JRE/JDK
+# update the package index.
+sudo apt-get update
+# install Java. Specifically, this command will install the Java Runtime Environment (JRE).
+sudo apt-get install default-jre
+# install the JDK 
+sudo apt-get install default-jdk
+
+# Installing the Oracle JDK
+add Oracle’s PPA, then update your package repository.
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+# install Oracle JDK 8
+sudo apt-get install oracle-java8-installer
 ```
 5. Install Suricata
 * [How To Install And Setup Suricata IDS On Ubuntu Linux 16.04](https://www.unixmen.com/install-suricata-ids-on-ubuntu-16-04/)
@@ -559,19 +588,44 @@ make
 sudo make install
 ```
 #### 二、准备一个四台靶机的靶场环境
+##### 实验网络环境说明
+未使用Open vSwitch
+| 主机序号 | 主机名称 | 漏洞名称| 桥接网络Ip | 端口映射 | 访问网址 |
+|----|----|----|----|----|----|
+|DEV-1|misskey-11.20.1|CVE-2019-1020010|172.19.0.1|3000->3000/tcp 11277->22/tcp|127.0.0.1:3000 172.19.0.1:3000 192.168.122.1:3000|  
+|DVE-2|oa-shiro-url|CVE-2016-4437|172.20.0.1|10020->22/tcp 11020->28/tcp 8123->8080/tcp|127.0.0.1:8123/projectoa 172.20.0.1:8123/projectoa 192.168.122.1:8123/projectoa|
+|DVE-3|biubiu-s2-007|jumpserver|172.18.0.1|8135->8080/tcp|127.0.0.1:8135 172.18.0.1:8135 192.168.122.1:8135|
+|DVE-4|GrandNode|CVE-2019-12276|172.21.0.1|10049->22/tcp 8181->8080/tcp|127.0.0.1:8181 172.21.0.1:8181 192.168.122.1:8181|  
 
+网络连通性部署  
+```brctl show```查看veth设备与各个网桥的连接情况，四个靶机都成功运行时的连接情况如下图所示。  
+![](images/veth-connection.png)
 ##### DVE-1 misskey-11.20.1---CVE-2019-1020010
-###### BUID FEATURES：
+* [CVE-2019-1020010](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-1020010)
+Misskey是一套微型博客平台。 Misskey 10.102.4之前版本中存在安全漏洞。攻击者可利用该漏洞劫持用户令牌。
+###### BUILD
+* [Poc-CVE-2019-1020010](https://github.com/nomi-sec/PoC-in-GitHub)  
+* [Misskey](https://github.com/misskey-dev/misskey)
+* [Misskey-Docker 部署指南](https://github.com/misskey-dev/misskey/blob/develop/docs/docker.zh.md)
+* [使用Docker最小化部署Misskey](https://candinya.com/posts/minimal-misskey-docker-deploy/)
+* [DXY0411/CVE-2019-1020010](https://github.com/DXY0411/CVE-2019-1020010)---来自同学的交流与帮助
+###### BUILD FEATURES：
 * db: redis 4.0.4
 * ids: zeek:alpine
-###### Writeup
-1. 
-##### DVE-2 oa_shiro_url---CVE-2016-4437
+###### 单靶机Writeup
+访问172.19.0.1：3000，可以看到平台名称是misskey。
+![](images/1-1.jpg)
+注册后登录:username:mudou;pwd:123456
+![](images/1-2.png)
+'Inspect Element',获得网站开发者名为syuilo
 
+##### DVE-2 oa_shiro_url---CVE-2016-4437
+* [CVE-2016-4437](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-4437)
+* [【漏洞复现】Apache Shiro 1.2.4反序列化漏洞复现及分析(cve-2016-4437)](https://www.matrixghd.com/2020/10/16/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-Apache-Shiro-1.2.4%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E5%88%86%E6%9E%90(cve-2016-4437)/)
 ###### BUILD FEATURES：
 * db: mysql 5.6
 * ids: zeek:alpine
-###### Writeup
+###### 单靶机Writeup
 
 Change:
 
@@ -587,10 +641,10 @@ def:
 # sudo docker-compose up
 ```
 ##### DVE-3 biubiu-s2-007---jumpserver
-BUILD FEATURES:
+###### BUILD FEATURES:
 * db: mysql 5.6.48
 * ids: zeek:alpine
-Writeup:
+###### 单靶机Writeup
 
 Change:
 ```
@@ -612,7 +666,7 @@ Change:
 ###### BUILD FEATURES:
 * db:mongo
 * ids:zeek:alpine
-###### Writeup:
+###### 单靶机Writeup
 
 Problems:
 执行```./docker-compose_up.sh```时，出现报错
@@ -647,48 +701,57 @@ ovs-vsctl (Open vSwitch) 2.5.9
 Compiled Jan 28 2021 19:49:45
 DB Schema 7.12.1
 
+# change the access permissions
+sudo cd /usr/bin
+sudo chmod a+rwx ovs-docker
 ```
-6. 网络连通性部署
-```brctl show```查看veth设备与各个网桥的连接情况，四个靶机都成功运行时的连接情况如下图所示。  
-![](images/veth-connection.png)
+6. 
 #### 三、用攻击方模拟工具自动检测内网环境
-1. Intsall Metasploit Framework
-* [metasploit-framework=github](https://github.com/rapid7/metasploit-framework)
-```
-curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && \
-  chmod 755 msfinstall && \
-  ./msfinstall
 
-# To check to see if the database was set up
-db_status
-# To enable and start using the local database
-msfdb init
 
-msfconsole --version
-# Framework Version: 6.0.40-dev-
-```
-2. Install java
-```
-# Installing the Default JRE/JDK
-# update the package index.
-sudo apt-get update
-# install Java. Specifically, this command will install the Java Runtime Environment (JRE).
-sudo apt-get install default-jre
-# install the JDK 
-sudo apt-get install default-jdk
-
-# Installing the Oracle JDK
-add Oracle’s PPA, then update your package repository.
-sudo add-apt-repository ppa:webupd8team/java
-sudo apt-get update
-# install Oracle JDK 8
-sudo apt-get install oracle-java8-installer
-```
 #### 四、写自己的自动化攻击脚本
 
 #### 五、场景设计总结
 
+##### 连通性需求
+* 内⽹-1 和其他内⽹均不连通 
+* 内⽹-2 和 内⽹-3 双向连通 
+* 内⽹-2 和 内⽹-4 双向不连通 
+* 内⽹-3 和 内⽹-4 双向连通
+##### 靶标需求
+* DVE-1 配置域名访问⽅式，具备「信息泄露」效果 
+* DVE-2 配置域名访问⽅式，需要管理员⽤户帐号登录，最终要达到「RCE」效果 
+* DVE-3 游客身份下，最终要达到「RCE」效果 
+* DVE-4 具备「任意⽂件读取」效果
+##### 基础设施需求
+⽹络拓扑中的路由器和交换机基于 ovs 实现。
+##### 靶标列表
+|编号| DVE名称 |漏洞利⽤条件（所需权限）| 漏洞利⽤效果| 备注|
+|----|----|----| ---- | ---- |  
+|DVE-1| misskey-11.20.1| ⽆权限约束 |获取管理员| cookie| ⽆|
+|DVE-2 |oa-shiro-url| 管理员帐号|远程代码执⾏ |⽆|
+|DVE-3| biubiu-s2-007| ⽆权限约束|远程代码执⾏| ⽆|
+|DVE-4 |GrondNode |⽆权限约束 |路径遍历任意⽂件读取| ⽆|
+##### 攻击路径
+1. 攻击者通过域名访问 DVE-1，利⽤ XSS 漏洞获得管理员⽤户的 cookie 
+2. 利⽤管理员 cookie，查看并下载管理员⽤户的⽹盘内容（DVE-1 包含个⼈⽂件存储功能），发现 DVE2 的域名和帐号密码 
+3. 访问第 2 步获取的 DVE-2 的域名，并登录账户，在内部公告信息⾥看到内⽹服务上线信息，得到 DVE-3 和 DVE-4 的 IP。同时进⾏漏洞利⽤并拿到 shell-0 
+4. 利⽤获得的 shell-0，对第 3 步获取的 DVE-3 IP 进⾏端⼝扫描并建⽴信道，⽽ DVE-4 IP 访问不通。 
+5. 访问 DVE-3 并进⾏漏洞利⽤，最终拿到 shell-1 
+6. 利⽤获得的 shell-1，对第 3 步获取的 DVE-4 IP 进⾏端⼝扫描并建⽴信道 
+7. 访问 DVE-4 并进⾏漏洞利⽤，最终读取 /flag.txt ⽂件
+##### 基于 ATT&CK 的攻击技术图
+* [attack.github.io](https://mitre-attack.github.io/attack-navigator/v2/enterprise/)
+* [attack-navigator](https://github.com/mitre-attack/attack-navigator)
+* 该攻击技术图没有区分技术点的重要性，仅仅突出本次实验涉及到的技术点
+* 该攻击技术图精确到sub-technique
+* 超级方便，同名technique可以同步点亮
+* 在点亮的过程中，以查字典的方式，先顾名思义第一次过滤，再根据编号或名称进一步对比分析。
+  * 比如[Resource Development]下有[Acquire Infrastructure]和[Compromise Infrustructure],这两个technique拥有相同的sub-technique，经过深入理解发现，前者强调直接针对服务器的攻击，而后者强调通过先对第三方攻击，再进一步攻击服务器。
 
+![](images/attack-points.svg)
+##### 基于 ATT&CK 的攻击路线图
+![](images/attack-route.png)
 #### 六、实验问题
 
 #### 七、演示视频
