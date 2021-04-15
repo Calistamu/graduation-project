@@ -705,7 +705,143 @@ DB Schema 7.12.1
 sudo cd /usr/bin
 sudo chmod a+rwx ovs-docker
 ```
-6. 
+6. 网络连通性配置
+* [How to use an OVS Bridge for Networking on Docker?](https://www.tutorialspoint.com/how-to-use-an-ovs-bridge-for-networking-on-docker)
+* [docker network create](https://docs.docker.com/engine/reference/commandline/network_create/)
+* [Open vSwitch on Linux, FreeBSD and NetBSD-validating](https://docs.openvswitch.org/en/latest/intro/install/general/#validating)
+直接新建docker bridge network,添加container，不用ovs可不可以?两者之间各有什么优缺点？用ovs的好处是什么？
+```
+# connect containers with the network:
+docker network connect myNetwork container1-web
+docker network connect myNetwork container2-web
+```
+```
+
+# create two new docker bridge network 
+docker network create docker1
+docker network create docker2
+docker network create docker3
+
+# details of the two new docker bridge network
+# docker1
+br-a994b1777c48 Link encap:Ethernet  HWaddr 02:42:58:8a:b0:9c
+          inet addr:172.22.0.1  Bcast:172.22.255.255  Mask:255.255.0.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+# docker2
+br-b0d7b5a363cf Link encap:Ethernet  HWaddr 02:42:96:a3:d3:19
+          inet addr:172.23.0.1  Bcast:172.23.255.255  Mask:255.255.0.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+# docker3
+br-7ff5e3aaf020 Link encap:Ethernet  HWaddr 02:42:02:e9:f1:e9
+          inet addr:172.24.0.1  Bcast:172.24.255.255  Mask:255.255.0.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+# create an ovs bridge
+sudo ovs-vsctl add-br ovs-br1
+sudo ovs-vsctl add-br ovs-br2
+sudo ovs-vsctl add-br ovs-br3
+
+# connect containers with bridge network
+# sudo ovs-docker add-port ovs-bridge-network-name docker-bridge-network-name container-name --ipaddress=container-new-internal-ip/24
+
+sudo ovs-docker add-port ovs-br1 br-a994b1777c48 2605d873a346 --ipaddress=172.22.0.2/24
+sudo ovs-docker add-port ovs-br1 br-a994b1777c48 fc546af81215 --ipaddress=172.22.0.3/24
+
+sudo ovs-docker add-port ovs-br2 br-b0d7b5a363cf fc546af81215 --ipaddress=172.23.0.2/24
+sudo ovs-docker add-port ovs-br2 br-b0d7b5a363cf 5e80af7a5be4 --ipaddress=172.23.0.3/24
+
+sudo ovs-docker add-port ovs-br3 br-7ff5e3aaf020 5e80af7a5be4 --ipaddress=172.24.0.2/24
+# display ovs bridges
+sudo ovs-vsctl show
+# details
+788e363e-c745-4951-b500-3a0315f3a177
+    Bridge "ovs-br3"
+        Port "ovs-br3"
+            Interface "ovs-br3"
+                type: internal
+        Port "806deeeeccec4_l"
+            Interface "806deeeeccec4_l"
+    Bridge "ovs-br1"
+        Port "8a484d816ae14_l"
+            Interface "8a484d816ae14_l"
+        Port "a7d05a23d9a24_l"
+            Interface "a7d05a23d9a24_l"
+        Port "ovs-br1"
+            Interface "ovs-br1"
+                type: internal
+    Bridge "ovs-br2"
+        Port "14cb7591cd244_l"
+            Interface "14cb7591cd244_l"
+        Port "ovs-br2"
+            Interface "ovs-br2"
+                type: internal
+        Port "bfd687d33af34_l"
+            Interface "bfd687d33af34_l"
+    ovs_version: "2.5.9"
+# 执行以后Ifconfig看到增加了四个映射出的网段：
+8a484d816ae14_l（DEV-2）--- ovs-br1 --- a7d05a23d9a24_l (DVE-3)
+14cb7591cd244_l（DEV-3）--- ovs-br2 --- bfd687d33af34_l（DEV-4）
+806deeeeccec4_l（DVE-1）--- ovs-br3
+```
+* ip写错了，需要删除ovs新建的网桥
+参考[ovs-vsctl del-br](https://docs.pica8.com/display/PICOS2111cg/ovs-vsctl+del-br)，执行```sudo ovs-vsctl --if-exists del-br ovs-br2```删除ovs-br2,然后新建。
+| DEV序号 | container-name | container-id | 
+|----|----|----|
+|DVE-1|misskey-11.20.1-web-app|9f342a322dba|
+|DVE-2|oa-shiro-url-web-app|2605d873a346|
+|DVE-3|biubiu-s2-007_web_1|fc546af81215|
+|DVE-4|grandnode-4.40-web-app|5e80af7a5be4| 
+
+docker1 ovs-br1 br-a994b1777c48 172.22.0.1 
+docker2 ovs-br2 br-b0d7b5a363cf 172.23.0.1
+docker3 ovs-br3 br-7ff5e3aaf020 172.24.0.1
+```
+# install ping-tool
+sudo apt-get update
+sudo apt-get install inetutils-ping
+sudo apt-get install iputils-ping
+# check connection
+sudo docker network inspect docker1
+# enter container 2
+sudo docker exec -ti 2605d873a346 bash 
+# check connection
+ping 172.22.0.3
+```
+* ```sudo docker exec -ti 2605d873a346 ping fc546af81215 OCI runtime exec failed: exec failed: container_linux.go:367: starting container process caused: exec: "ping": executable file not found in $PATH: unknown```
+参考[OCI runtime exec failed: exec failed: container_linux.go:344: starting container process](https://stackoverflow.com/questions/55378420/oci-runtime-exec-failed-exec-failed-container-linux-go344-starting-container)
+```
+sudo apt-get update
+sudo apt-get install inetutils-ping
+
+mkdir ubuntu_with_ping
+cat >ubuntu_with_ping/Dockerfile <<'EOF'
+FROM ubuntu
+RUN apt-get update && apt-get install -y iputils-ping
+CMD bash
+EOF
+docker build -t ubuntu_with_ping ubuntu_with_ping
+docker run -it ubuntu_with_ping
+```
+
+|DEV序号|靶机名称|docker-bridge-network-name|internal-GW-address|ip-address|
+|----|----|----|----|----|
+|DEV-1|misskey-11.20.1|br-8ab47b7a4b04|172.19.0.1|172.19.0.1|
+|DVE-2|oa-shiro-url|br-e5ca58eb2d4d|172.20.0.1|172.20.0.5|
+|DVE-3|biubiu-s2-007|br-d5166eca3f52|172.18.0.1|172.18.0.4|
+|DVE-4|GrandNode|br-65f62d0dc80d|172.21.0.1|172.21.0.3|
+
 #### 三、用攻击方模拟工具自动检测内网环境
 
 
