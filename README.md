@@ -695,6 +695,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 5. Install Open vSwitch
 ```
+# ubuntu16.04
 sudo apt-get install openvswitch-switch
 ovs-vsctl --version
 ovs-vsctl (Open vSwitch) 2.5.9
@@ -704,11 +705,17 @@ DB Schema 7.12.1
 # change the access permissions
 sudo cd /usr/bin
 sudo chmod a+rwx ovs-docker
+
+# enter every container
+apt-get install -y openvswitch-switch openvswitch-common
+# special for misskey, based on alpine
+apk add openvswitch
 ```
 6. 网络连通性配置
 * [How to use an OVS Bridge for Networking on Docker?](https://www.tutorialspoint.com/how-to-use-an-ovs-bridge-for-networking-on-docker)
 * [docker network create](https://docs.docker.com/engine/reference/commandline/network_create/)
 * [Open vSwitch on Linux, FreeBSD and NetBSD-validating](https://docs.openvswitch.org/en/latest/intro/install/general/#validating)
+* [Multi-Host Overlay Networking with Open vSwitch](https://docker-k8s-lab.readthedocs.io/en/latest/docker/docker-ovs.html)
 直接新建docker bridge network,添加container，不用ovs可不可以?两者之间各有什么优缺点？用ovs的好处是什么？
 ```
 # connect containers with the network:
@@ -716,37 +723,6 @@ docker network connect myNetwork container1-web
 docker network connect myNetwork container2-web
 ```
 ```
-
-# create two new docker bridge network 
-docker network create docker1
-docker network create docker2
-docker network create docker3
-
-# details of the two new docker bridge network
-# docker1
-br-a994b1777c48 Link encap:Ethernet  HWaddr 02:42:58:8a:b0:9c
-          inet addr:172.22.0.1  Bcast:172.22.255.255  Mask:255.255.0.0
-          UP BROADCAST MULTICAST  MTU:1500  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-# docker2
-br-b0d7b5a363cf Link encap:Ethernet  HWaddr 02:42:96:a3:d3:19
-          inet addr:172.23.0.1  Bcast:172.23.255.255  Mask:255.255.0.0
-          UP BROADCAST MULTICAST  MTU:1500  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-# docker3
-br-7ff5e3aaf020 Link encap:Ethernet  HWaddr 02:42:02:e9:f1:e9
-          inet addr:172.24.0.1  Bcast:172.24.255.255  Mask:255.255.0.0
-          UP BROADCAST MULTICAST  MTU:1500  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
 # create an ovs bridge
 sudo ovs-vsctl add-br ovs-br1
@@ -807,19 +783,36 @@ sudo ovs-vsctl show
 docker1 ovs-br1 br-a994b1777c48 172.22.0.1 
 docker2 ovs-br2 br-b0d7b5a363cf 172.23.0.1
 docker3 ovs-br3 br-7ff5e3aaf020 172.24.0.1
+|bridge name |    bridge id        |       STP enabled    | interfaces|
+|----|----|----|----|
+|br-65f62d0dc80d     |    8000.0242e0f3e490 | no | vethd4fcd05 vethfc7911d|
+|br-8ab47b7a4b04     |   8000.02420aee6b68 | no  |veth19005fd veth3155cea veth5d5c52b veth9d936c3 vethcef077b|
+|br-d5166eca3f52     | 8000.024211cef061       |no  |veth6ca72a3 vetha3d5a31|
+|br-e5ca58eb2d4d  |       8000.0242fa6eb7ab     |  no|  veth55a06fd veth9969326 vethf473ddf|
+|docker0        | 8000.02424ecfd188    |  no    |veth3c18c3b veth6c890c3 vethd8b5572 vethfe71c4a|
+|virbr0|          8000.000000000000      | yes|   |
+
 ```
+# 依次进入containers
+sudo docker exec -ti 2605d873a346 bash
 # install ping-tool
-sudo apt-get update
-sudo apt-get install inetutils-ping
-sudo apt-get install iputils-ping
+apt-get update
+apt-get install inetutils-ping
+apt-get install iputils-ping
+apt-get install net-tools
 # check connection
 sudo docker network inspect docker1
 # enter container 2
-sudo docker exec -ti 2605d873a346 bash 
+sudo docker exec -ti 9f342a322dba bash 
+sudo docker exec -ti 2605d873a346 bash
+sudo docker exec -ti fc546af8121 bash
+sudo docker exec -ti 5e80af7a5be4 bash
+sudo docker exec -ti 2605d873a346 ping 2605d873a346
+sudo docker exec -ti 2605d873a346 ping 172.22.0.3
 # check connection
 ping 172.22.0.3
 ```
-* ```sudo docker exec -ti 2605d873a346 ping fc546af81215 OCI runtime exec failed: exec failed: container_linux.go:367: starting container process caused: exec: "ping": executable file not found in $PATH: unknown```
+* ```sudo docker exec -ti 2605d873a346 ping fc546af81215 OCI runtime exec failed: exec failed: container_linux.go:367: starting container process caused: exec: "ping": executable file not found in $PATH: unknown```  
 参考[OCI runtime exec failed: exec failed: container_linux.go:344: starting container process](https://stackoverflow.com/questions/55378420/oci-runtime-exec-failed-exec-failed-container-linux-go344-starting-container)
 ```
 sudo apt-get update
@@ -841,7 +834,56 @@ docker run -it ubuntu_with_ping
 |DVE-2|oa-shiro-url|br-e5ca58eb2d4d|172.20.0.1|172.20.0.5|
 |DVE-3|biubiu-s2-007|br-d5166eca3f52|172.18.0.1|172.18.0.4|
 |DVE-4|GrandNode|br-65f62d0dc80d|172.21.0.1|172.21.0.3|
+* 使用tmux时出现报错```error connecting to /tmp/tmux-1000/default (No such file or directory)```  
+参考[tmux Introduction, Configuration, and Boot-Time Setup](https://markmcb.com/2016/05/23/tmux-introduction-configuration-boot-time-setup/)
+```
+# Setup a session called "stuff" that has 2 windows.
+# The first window we'll call "text-to-file"
+# We want it putting dates into a text file
+tmux new-session -d -s stuff -n text-to-file -c /tmp 'watch -n1 "date >> date_file"'
 
+# Vertically split the window in step 1 into 2 panes.
+# The second pane tails the dates file.
+tmux split-window -d -t stuff:text-to-file -c /tmp -v 'watch -n1 tail -n10 date_file'
+
+# Create second window called "monitor" running top.
+tmux new-window -d -a -t stuff:text-to-file -n monitor 'top'
+
+# Horizontally split the window in step 3 into 2 panes.
+# The second pane is watching the /tmp folder for changes.
+tmux split-window -d -t stuff:monitor -c /tmp -h 'watch -n3 ls -la'
+```
+还是没有解决，发现是版本太旧，参考[How to install the latest tmux on Ubuntu 16.04](https://bogdanvlviv.com/posts/tmux/how-to-install-the-latest-tmux-on-ubuntu-16_04.html)重新安装。
+```
+sudo apt update
+
+sudo apt install -y git
+
+sudo apt install -y automake
+sudo apt install -y bison
+sudo apt install -y build-essential
+sudo apt install -y pkg-config
+sudo apt install -y libevent-dev
+sudo apt install -y libncurses5-dev
+
+rm -fr /tmp/tmux
+
+git clone https://github.com/tmux/tmux.git /tmp/tmux
+
+cd /tmp/tmux
+
+git checkout master
+
+sh autogen.sh
+
+./configure && make
+
+sudo make install
+
+cd -
+
+rm -fr /tmp/tmux
+```
 #### 三、用攻击方模拟工具自动检测内网环境
 
 
