@@ -364,7 +364,11 @@ Open vSwitch还提供了一些工具:
 * [OVN](https://www.ovn.org/en/)
 * [OVN:Open Virtual Network for Open vSwitch](http://www.openvswitch.org//support/slides/OVN-Vancouver.pdf)
 * [交换机、路由器、网关的概念和用途](https://www.huaweicloud.com/articles/51b313f5ce75fcf27c6d99a0e8239c39.html)
-
+##### docker网络映射原理
+首先安装好docker后会多出来一块网卡叫做docker0，与容器进行互联，运行一个镜像都会开启一个容器，一个镜像可以运行多次，每当运行后都会产生新的ip地址新的配置参数，生成ip地址后，宿主机会多一块vethxxx的网卡，vethxxx的网卡连接docker容器中的ip地址和docker网桥，docker网桥再连接宿主的docker0网卡，当docker容器需要上网时，docker0网卡就会与宿主机网卡ens33或者其他的网卡接口进行内核转发实现nat地址转换，最终由eth网卡去访问互联网，最后依次返回。
+![](images/docker-network-mapping.png)
+##### docker四种网络模型
+* [docker的4种网络模型](https://www.huaweicloud.com/articles/0631c1b8375411f48a3d8471cfbc0a46.html)
 
 ##### DPDK-Data Plane Development Kit
 [Data Plane Development Kit](https://en.wikipedia.org/wiki/Data_Plane_Development_Kit)
@@ -406,19 +410,59 @@ dpdk劣势
 * 低负荷服务器不实用，会造成内核空转.
 
 ![](images/ovn-architecture.png)
+##### OVN
+* [OVN:Open Virtual Network for Open vSwitch](openvswitch.org//support/slides/OVN-Vancouver.pdf)
 ##### NFV-[Network function virtualization](https://en.wikipedia.org/wiki/Network_function_virtualization)，网络功能虚拟化
 
 网络架构理念，将整个网络中的各个功能节点虚拟化，连接成一个可通信的模块。  
 一个NFV可能包括一个或多个运行不同软件和进程的虚拟机或容器，相较传统的服务器虚拟化技术，NFC可能包括一个或多个运行不同软件和进程的虚拟机或容器，不需要硬件设备的支持，史构建在标准的高容量服务器、交换机和存储设备，甚至是云计算基础设施之上。  
-* 会话边界控制器SBC，Session Border Controller,
+* [会话边界控制器SBC](https://baike.baidu.com/item/%E4%BC%9A%E8%B0%88%E8%BE%B9%E7%95%8C%E6%8E%A7%E5%88%B6%E5%99%A8/22923493?fromtitle=SBC&fromid=23647938)，Session Border Controller,一种NAT穿透的方式。SBC可确保VoIP 安全，又可提供媒体代理服务器的套件。
 ##### OpenFlow
-定义：控制器和交换机之间的标准协议
-组成：
-* OpenFlowswitch:进行数据层的转发
-  * 使用FlowTable,流表来进行转发，流表的生成、维护和下发由外置的Controller实现。
-* FlowVisor：对网络进行虚拟化
-* Controller：对网络进行集中控制，取代路由，决定了所有数据包在网络中的传输路径
+* [OpenFlow-WIKIPEDIA](https://en.wikipedia.org/wiki/OpenFlow)
+* [OpenFlow: Enabling Innovation in Campus Networks](http://ccr.sigcomm.org/online/files/p69-v38n2n-mckeown.pdf)
+定义：基于TCP/IP提出的数据交换协议，将数据包的转发分为OpenFlow Switch和OpenFlow Controller分别独立完成，实现了控制层面和转层面的分离，控制器只负责转发规则，交换机只执行转发，且交换机和控制器通过Ip网络链接，可以不位于同一台主机上。
 
+组成：
+* OpenFlow交换机进行数据层的转发；
+* FlowVisor对网络进行虚拟化；
+* Controller对网络进行集中控制，实现控制层的功能，本地维护一份流表Flow Table,定义了数据包的传输路径。 
+
+OpenFlow协议支持三种信息类型：
+* 每一个类型都有多个子类型。
+* a) Controller/Switch消息，是指由Controller发起、Switch接收并处理的消息，主要包括Features、Configuration、Modify-State、Read-State、Packet-out、Barrier和Role-Request等消息。这些消息主要由Controller用来对Switch进行状态查询和修改配置等操作。
+* b) 异步(Asynchronous)消息，是由Switch发送给Controller、用来通知Switch上发生的某些异步事件的消息，主要包括Packet-in、Flow-Removed、Port-status和Error等。例如，当某一条规则因为超时而被删除时，Switch将自动发送一条Flow-Removed消息通知Controller，以方便Controller作出相应的操作，如重新设置相关规则等。
+* c) 对称(Symmetric)消息，顾名思义，这些都是双向对称的消息，主要用来建立连接、检测对方是否在线等，包括Hello、Echo和Experimenter三种消息。
+另外出于安全和高可用性等方面的考虑，OpenFlow的规范还规定了如何为Controller和Switch之间的信道加密、如何建立多连接等(主连接和辅助连接)。
+
+OpenFlow交换机的分类
+* 专用的OpenFlow交换机：它是专门为支持OpenFlow而设计的。它不支持现有的商用交换机上的正常处理流程，所有经过该交换机的数据都按照OpenFlow的模式进行转发。专用的OpenFlow交换机中不再具有控制逻辑，因此专用的OpenFlow交换机是用来在端口间转发数据包的一个简单的路径部件。
+* 支持OpenFlow的交换机：它是在商业交换机的基础上添加流表、安全通道和OpenFlow协议来获得了OpenFlow特性的交换机。其既具有常用的商业交换机的转发模块，又具有OpenFlow的转发逻辑，因此支持OpenFlow的交换机可以采用两种不同的方式处理接收到的数据包。
+
+##### Ovs中的OpenFlow
+* [云计算底层技术-openflow在OVS中的应用](https://opengers.github.io/openstack/openstack-base-openflow-in-openvswitch/)
+Ovs可以使用OpenFlow Controller获取流表，也可以使用ovs-ofctl手动添加流表项。  
+ovs是linux bridge一个很好的选择，支持多种flow，也可以同时维护多个流表，每个流表包括多个流表项，每条流表项包含多个匹配字段match fields以及匹配成功后要执行的指令集action set和统计信息。  
+* [](images/openvswitch-openflow.png)
+* 真实的Switch硬件存储RIB和FIB，靠查询TCAM来匹配路由表项，Open vSwitch的话只能靠纯软件数据结构实现，没记错的话有哈希表实现的O(1)查找，还有链表实现的O(n)查找，路由表项都存储在内存里。
+从协议扩展上来说，一般的硬件Switch对协议的解析流程都是固化的，当然好的交换机也可以通过后期的固件升级支持新的协议，而Open vSwitch只需要改代码就可以，可以适应快并且激烈的网络协议变化（比如OpenFlow）
+##### OpenStack,即ODL
+* [OpenStack](https://www.openstack.org/)
+* [OpenStack-Wikipedia](https://en.wikipedia.org/wiki/OpenStack)
+
+开源的云计算管理平台项目，是一系列软件开源项目的组合。
+![](images/openstack-map.svg)
+##### OpenDaylight
+* [OpenDaylight](https://www.opendaylight.org/)
+* [OpenDaylight Project-wikipedia](https://en.wikipedia.org/wiki/OpenDaylight_Project)
+* [Installing OpenDaylight](https://docs.opendaylight.org/en/stable-carbon/getting-started-guide/installing_opendaylight.html)
+Open Daylight是一个高度可用、模块化、可扩展、支持多协议的控制器平台,可以作为SDN管理平面管理多厂商异构的SDN网络.基于Karaf容器.
+![](images/opendaylight.jpg)
+* SDN的一种实现方式
+![](images/SDN-realization.png)
+##### SDN（Software Defined Network）
+　　基于OpenFlow实现SDN，则在网络中实现了软硬件的分离以及底层硬件的虚拟化，从而为网络的发展提供了一个良好的发展平台。 
+##### OpenShift SDN
+OpenShift SDN使用了OpenvSwitch、VXLAN隧道、OpenFlow规则和iptables。这个网络可以通过使用巨帧、网卡卸载、多队列和ethtool设置来调优。
 
 ##### veth network
 veth:Vitual Ethernet Device
@@ -816,7 +860,8 @@ docker network connect myNetwork container2-web
 sudo ovs-vsctl add-br ovs-br1
 sudo ovs-vsctl add-br ovs-br2
 sudo ovs-vsctl add-br ovs-br3
-
+# delete an ovs bridge
+sudo ovs-vsctl --if-exists del-br ovs-br1
 # details
 mudou@mudou-VirtualBox:~$ sudo ovs-vsctl show
 [sudo] password for mudou:
@@ -834,50 +879,31 @@ mudou@mudou-VirtualBox:~$ sudo ovs-vsctl show
             Interface "ovs-br2"
                 type: inte
 
-# connect containers with bridge network
-# sudo ovs-docker add-port ovs-bridge-network-name docker-bridge-network-name container-name --ipaddress=container-new-internal-ip/24
-
-sudo ovs-docker add-port ovs-br1 br-a994b1777c48 2605d873a346 --ipaddress=172.22.0.2/24
-sudo ovs-docker add-port ovs-br1 br-a994b1777c48 fc546af81215 --ipaddress=172.22.0.3/24
-
-sudo ovs-docker add-port ovs-br2 br-b0d7b5a363cf fc546af81215 --ipaddress=172.23.0.2/24
-sudo ovs-docker add-port ovs-br2 br-b0d7b5a363cf 5e80af7a5be4 --ipaddress=172.23.0.3/24
-
-sudo ovs-docker add-port ovs-br3 br-7ff5e3aaf020 5e80af7a5be4 --ipaddress=172.24.0.2/24
-# display ovs bridges
-sudo ovs-vsctl show
-# details
-788e363e-c745-4951-b500-3a0315f3a177
-    Bridge "ovs-br3"
-        Port "ovs-br3"
-            Interface "ovs-br3"
-                type: internal
-        Port "806deeeeccec4_l"
-            Interface "806deeeeccec4_l"
-    Bridge "ovs-br1"
-        Port "8a484d816ae14_l"
-            Interface "8a484d816ae14_l"
-        Port "a7d05a23d9a24_l"
-            Interface "a7d05a23d9a24_l"
-        Port "ovs-br1"
-            Interface "ovs-br1"
-                type: internal
-    Bridge "ovs-br2"
-        Port "14cb7591cd244_l"
-            Interface "14cb7591cd244_l"
-        Port "ovs-br2"
-            Interface "ovs-br2"
-                type: internal
-        Port "bfd687d33af34_l"
-            Interface "bfd687d33af34_l"
-    ovs_version: "2.5.9"
-# 执行以后Ifconfig看到增加了四个映射出的网段：
-8a484d816ae14_l（DEV-2）--- ovs-br1 --- a7d05a23d9a24_l (DVE-3)
-14cb7591cd244_l（DEV-3）--- ovs-br2 --- bfd687d33af34_l（DEV-4）
-806deeeeccec4_l（DVE-1）--- ovs-br3
 ```
 * ip写错了，需要删除ovs新建的网桥
 参考[ovs-vsctl del-br](https://docs.pica8.com/display/PICOS2111cg/ovs-vsctl+del-br)，执行```sudo ovs-vsctl --if-exists del-br ovs-br2```删除ovs-br2,然后新建。
+
+* ovn underlay vs overlay:  
+underlay:OVN需要OpenStack来提供容器网络。在这种模式下，可以创建逻辑网络，并且可以让容器在vm中运行，独立的vm(没有任何容器在vm中运行)和物理机器连接到同一个逻辑网络。这是一个多租户、多主机的解决方案。(容器运行在虚拟机中，而ovs则运行在虚拟机所在的物理机上，OVN将容器网络和虚拟机网络连接在一起)  
+overlay:OVN可以在运行在多台主机上的容器之间创建一个逻辑网络。这是一个单承租者(根据工作负载的安全性特征可扩展到多承租者)、多主机解决方案。无需预先创建OpenStack安装部署。(OVN通过logical overlay network连接所有节点的容器，此时ovs可以直接运行在物理机或虚拟机上)
+
+* ovn gre vs vxlan:  
+[Provider Network Support](https://docs.openstack.org/neutron/rocky/feature_classification/provider_network_support_matrix.html)
+如下图所示，在四种网络协议中，vlan只能实现同一子网下的网络隔离，而vxlan弥补了这一不足，支持多层的网络隔离，除此之外，vxlan具备更强的包容性，支持Linux环境下网桥，能够使用ovs实现其部署。gre和vxlan的区别在于，gre同局域网内的主机必须彼此都互联才能通信（A---B,B---C,A---C），而vxlan支持“跳板机通信”（A---B---C）.VXLAN屏蔽了UDP的存在，上层基本上不感知这层封装。同时VXLAN避免了GRE的点对点必须有连接的缺点。由于需要IGMP，vxlan对于物理交换机和路由器需要做一些配置，这点在GRE是不需要的。抽象地将每个br-tun看成隧道端点，有状态的隧道点对点连接即为GRE；无状态的隧道使用UDP协议连接则为VXLAN。  
+  * [sdn-packet-flow](https://docs.openshift.com/container-platform/3.7/architecture/networking/sdn.html#sdn-packet-flow)
+```
+Now suppose first that container A is on the local host and container B is also on the local host. Then the flow of packets from container A to container B is as follows:
+eth0 (in A’s netns) → vethA → br0 → vethB → eth0 (in B’s netns)
+
+Next, suppose instead that container A is on the local host and container B is on a remote host on the cluster network. Then the flow of packets from container A to container B is as follows:
+eth0 (in A’s netns) → vethA → br0 → vxlan0 → network [1] → vxlan0 → br0 → vethB → eth0 (in B’s netns)
+
+Finally, if container A connects to an external host, the traffic looks like:
+eth0 (in A’s netns) → vethA → br0 → tun0 → (NAT) → eth0 (physical device) → Internet
+```
+![](images/network-support.png)
+
+
 | DEV序号 | container-name | container-id | 
 |----|----|----|
 |DVE-1|misskey-11.20.1-web-app|9f342a322dba|
@@ -885,37 +911,49 @@ sudo ovs-vsctl show
 |DVE-3|biubiu-s2-007_web_1|fc546af81215|
 |DVE-4|grandnode-4.40-web-app|5e80af7a5be4| 
 
-docker1 ovs-br1 br-a994b1777c48 172.22.0.1 
-docker2 ovs-br2 br-b0d7b5a363cf 172.23.0.1
-docker3 ovs-br3 br-7ff5e3aaf020 172.24.0.1
-|bridge name |    bridge id        |       STP enabled    | interfaces|
+veth设备情况：
+|DVE序号|web-app-name|bridge name |    bridge id        |       STP enabled    | interfaces|
 |----|----|----|----|
-|br-65f62d0dc80d     |    8000.0242e0f3e490 | no | vethd4fcd05 vethfc7911d|
-|br-8ab47b7a4b04     |   8000.02420aee6b68 | no  |veth19005fd veth3155cea veth5d5c52b veth9d936c3 vethcef077b|
-|br-d5166eca3f52     | 8000.024211cef061       |no  |veth6ca72a3 vetha3d5a31|
-|br-e5ca58eb2d4d  |       8000.0242fa6eb7ab     |  no|  veth55a06fd veth9969326 vethf473ddf|
-|docker0        | 8000.02424ecfd188    |  no    |veth3c18c3b veth6c890c3 vethd8b5572 vethfe71c4a|
-|virbr0|          8000.000000000000      | yes|   |
+
+|DVE-1|misskey-11.20.1|br-8ab47b7a4b04     |   8000.02420aee6b68 | no  |veth19005fd veth3155cea veth5d5c52b veth9d936c3 vethcef077b|
+|DVE-2|oa-shiro-url|br-e5ca58eb2d4d  |       8000.0242fa6eb7ab     |  no|  veth55a06fd veth9969326 vethf473ddf|
+|DVE-3|biubiu-s2-007|br-d5166eca3f52     | 8000.024211cef061       |no  |veth6ca72a3 vetha3d5a31|
+|DVE-4|GrandNode|br-65f62d0dc80d     |    8000.0242e0f3e490 | no | vethd4fcd05 vethfc7911d|
+|None|None|docker0        | 8000.02424ecfd188    |  no    |veth3c18c3b veth6c890c3 vethd8b5572 vethfe71c4a|
+|None|None|virbr0|          8000.000000000000      | yes|   |
 
 ```
+# check connection
+sudo docker network inspect docker1
 # 依次进入containers
+sudo docker exec -ti 9f342a322dba bash 
 sudo docker exec -ti 2605d873a346 bash
+sudo docker exec -ti fc546af8121 bash
+sudo docker exec -ti 5e80af7a5be4 bash
+# 依次进入容器查看veth pair 
+cat /sys/class/net/eth0/iflink
+# 主系统中找到对应的号
+ip link
+# 依次得到各个web-app容器在物理机上的veth pair
+DVE-1 30 veth06da16e@if29
+DVE-2 42 veth5e198ee@if41
+DVE-3 60 veth42be325@if59
+DVE-4 46 vethd7af8ae@if45
+```
+![](images/veth-pair.png)
+```
 # install ping-tool
 apt-get update
 apt-get install inetutils-ping
 apt-get install iputils-ping
 apt-get install net-tools
+
 # check connection
 sudo docker network inspect docker1
-# enter container 2
-sudo docker exec -ti 9f342a322dba bash 
-sudo docker exec -ti 2605d873a346 bash
-sudo docker exec -ti fc546af8121 bash
-sudo docker exec -ti 5e80af7a5be4 bash
+#
 sudo docker exec -ti 2605d873a346 ping 2605d873a346
 sudo docker exec -ti 2605d873a346 ping 172.22.0.3
-# check connection
-ping 172.22.0.3
+
 ```
 * ```sudo docker exec -ti 2605d873a346 ping fc546af81215 OCI runtime exec failed: exec failed: container_linux.go:367: starting container process caused: exec: "ping": executable file not found in $PATH: unknown```  
 参考[OCI runtime exec failed: exec failed: container_linux.go:344: starting container process](https://stackoverflow.com/questions/55378420/oci-runtime-exec-failed-exec-failed-container-linux-go344-starting-container)
@@ -933,11 +971,11 @@ docker build -t ubuntu_with_ping ubuntu_with_ping
 docker run -it ubuntu_with_ping
 ```
 
-|DEV序号|靶机名称|docker-bridge-network-name|internal-GW-address|ip-address|
+|DVE序号|靶机名称|docker-bridge-network-name|internal-GW-address|web-app-ip-address|
 |----|----|----|----|----|
-|DEV-1|misskey-11.20.1|br-8ab47b7a4b04|172.19.0.1|172.19.0.1|
+|DVE-1|misskey-11.20.1|br-8ab47b7a4b04|172.19.0.1|172.19.0.5|
 |DVE-2|oa-shiro-url|br-e5ca58eb2d4d|172.20.0.1|172.20.0.5|
-|DVE-3|biubiu-s2-007|br-d5166eca3f52|172.18.0.1|172.18.0.4|
+|DVE-3|biubiu-s2-007|br-d5166eca3f52|172.18.0.1|172.18.0.3|
 |DVE-4|GrandNode|br-65f62d0dc80d|172.21.0.1|172.21.0.3|
 * 使用tmux时出现报错```error connecting to /tmp/tmux-1000/default (No such file or directory)```  
 参考[tmux Introduction, Configuration, and Boot-Time Setup](https://markmcb.com/2016/05/23/tmux-introduction-configuration-boot-time-setup/)
