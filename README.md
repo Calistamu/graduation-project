@@ -358,8 +358,7 @@ Open vSwitch还提供了一些工具:
 同样，Open vSwitch支持GRE实现，可以同时处理数千条GRE隧道，并支持对隧道创建、配置和拆除的远程配置。例如，可以用于连接不同数据中心的私有虚拟机网络。
 * 硬件集成：Open vSwitch的转发路径(内核内数据路径)被设计成能够将包处理“卸载”到硬件芯片组，无论是位于经典的硬件交换机箱还是终端主机网卡中。这允许打开的vSwitch控制路径能够同时控制一个纯软件实现或一个硬件开关。
 * Open vSwitch在设计领域的目标与以前的管理程序网络栈不同，它关注的是大规模基于linux的虚拟化环境中对自动化和动态网络控制的需求。使用Open vSwitch的目标是使内核代码尽可能小(这是性能的需要)，并在适用时重用现有的子系统(例如，Open vSwitch使用现有的QoS堆栈)。从Linux 3.3开始，Open vSwitch作为内核的一部分被包含在内，用户空间实用程序的打包在大多数流行的发行版上都可以使用。
-[Why Open vSwitch?](https://docs.openvswitch.org/en/latest/intro/why-ovs/#why-open-vswitch)
-应用安全，先有时间沉淀和学习，时间看个人情况，还有文档的梳理，枯燥和乏味，有偏差，自己调整心态。    
+[Why Open vSwitch?](https://docs.openvswitch.org/en/latest/intro/why-ovs/#why-open-vswitch)    
 ##### OVN
 * [OVN](https://www.ovn.org/en/)
 * [OVN:Open Virtual Network for Open vSwitch](http://www.openvswitch.org//support/slides/OVN-Vancouver.pdf)
@@ -866,18 +865,19 @@ sudo ovs-vsctl --if-exists del-br ovs-br1
 mudou@mudou-VirtualBox:~$ sudo ovs-vsctl show
 [sudo] password for mudou:
 788e363e-c745-4951-b500-3a0315f3a177
-    Bridge "ovs-br3"
-        Port "ovs-br3"
-            Interface "ovs-br3"
-                type: internal
+
     Bridge "ovs-br1"
         Port "ovs-br1"
             Interface "ovs-br1"
                 type: internal
-    Bridge "ovs-br2"
-        Port "ovs-br2"
-            Interface "ovs-br2"
-                type: inte
+# 添加网卡
+mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth1 misskey-11.20.1-web-app --ipaddress="10.1.0.1/24" --gateway="10.1.0.254" --macaddress="00:00:01:00:00:01"
+ovs-docker: Port already attached for CONTAINER=misskey-11.20.1-web-app and INTERFACE=eth1
+mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth1 oa-shiro-url-web-app --ipaddress="10.2.0.2/24" --gateway="10.2.0.254" --macaddress="00:00:02:00:00:02" RTNETLINK answers: File exists
+mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth1 biubiu-s2-007_web_1 --ipaddress="10.2.0.3/24" --gateway="10.2.0.254" --macaddress="00:00:02:00:00:03"  RTNETLINK answers: File exists
+mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth2 biubiu-s2-007_web_1 --ipaddress="10.3.0.2/24" --gateway="10.3.0.254" --macaddress="00:00:03:00:00:02"
+RTNETLINK answers: File exists
+mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth1 grandnode-4.40-web-app --ipaddress="10.3.0.3/24" --gateway="10.3.0.254" --macaddress="00:00:03:00:00:03"
 
 ```
 * ip写错了，需要删除ovs新建的网桥
