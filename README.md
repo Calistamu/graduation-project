@@ -1,5 +1,28 @@
 # graduation-project
-## 题目：Linux 威胁模拟工具设计与实现---攻击方环境测评系统
+
+仓库说明：
+
+毕业设计。
+
+markdown分为六章，完整资料包括代码已存网盘。
+
+Ⅰ  题目
+
+Ⅱ  开题：开题答辩内容+初期理论补充
+
+Ⅲ 中期：开题答辩内容+中期理论补充
+
+Ⅳ 结项：结项答辩内容
+
+Ⅴ  实验及结果
+
+Ⅵ  场景设计总结 场景报告
+
+Ⅶ  指导总结
+
+Ⅷ 同学的毕设
+
+## Ⅰ 题目：Linux 威胁模拟工具设计与实现---攻击方环境测评系统
 
 Design and Implementation of Linux Red Team Adversary Emulation Tools
 
@@ -9,9 +32,11 @@ Design and Implementation of Linux Red Team Adversary Emulation Tools
 
 对学生的要求：本课题的实施需要学生具备 Linux 环境下的渗透测试工具使用能力和 Linux 工作环境代码部署和运维经验，了解编写 Suricata 和 Bro/Zeek 等知名开源流量分析与入侵检测系统的检测插件方法。
 
-## 开题（开题答辩+中期理论知识补充修改）
+## Ⅱ 开题
+* 开题答辩内容+开题至中期实验过程中调研补充
 ### 一、题目分析：玩一次左右互博的游戏
 * 背景介绍+针对题目的自我解读
+
 解释：假设我们新开发了一个安全产品或搭建了一个自认为安全的网络（诸如此类，在此称之为"保护对象"），在"保护对象"投入市场前，已经有针对我们当前这个"保护对象"的同类做出的攻击行为，因此，先给"保护对象"制作一个基于历史攻击行为的完备防御护罩，再投入市场。   
 模拟运行一个攻击方工具，假设我们会被它攻击，在此基础上"像一个攻击者一样"反向思考，即这个攻击方如何攻击我们就如何率先防御，去评估产品的安全性，进行威胁建模（具体的是要完成若干威胁检测能力算法或工具的横向测评实验），从而实现在产品投入市场之前就已经对当前产品做了先知性的防御准备。该毕设在市场应用中属于安服行业。
 ### 二、题目要求
@@ -45,13 +70,12 @@ Design and Implementation of Linux Red Team Adversary Emulation Tools
 中层模型
 * High Level:[Lockheed Martin Kill Chain](https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html) & Microsoft STRIDE
    * 宏观、流程、目标
-![](images/THE-CYBER-KILL-CHAIN-body.png)
+   ![](images/THE-CYBER-KILL-CHAIN-body.png)
 * Mid-level Model:[Mitre ATT&CK](https://attack.mitre.org/)
    * 提供了非常详细和不断更新的技术信息，比如何种操作、操作之间的关系、操作序列，优点就在于有上下文
 * Low Level Concepts:Exploit & Vulnerability database & models
    * 具体实例，但缺少对使用者和上下文的描述
-
-2. 威胁建模原理
+2.  威胁建模原理
 * [威胁建模-msdn](https://docs.microsoft.com/zh-cn/learn/modules/tm-introduction-to-threat-modeling/1-introduction)  
 
 四大步骤：设计---中断---修复---验证
@@ -194,7 +218,7 @@ ATT&CK相关资源
       * MAEC作为一种通用的中间层，用于不同恶意软件存储库模式之间的映射，从而使得不同存储库中的分析信息可以共享，允许团队或组织快速利用彼此的分析结果。而且，MAEC还可以对恶意软件属性结构化和标记，进一步改进数据挖掘。比如，分析师可以查询基于MAEC的恶意软件存储库，进一步查找恶意软件动作、行为或能力的实例。
       * 针对MAEC结构的标准化输出工具：[Utilities & Developer Resources](https://maecproject.github.io/documentation/utils/)
       * 其中的分析得到的malware behavoir独立为一个project,[MBC（Malware Behavoir Catalog）](https://github.com/MBCProject/mbc-markdown)映射到了Cuckoo community signatures和capa rules中进行使用,以及STIX2中。
-    ![](images/malware-analysis.png)
+      ![](images/malware-analysis.png)
     * 二、网络威胁分析：MAEC对恶意软件实例显示的能力进行标准化编码，从而准确识别恶意软件对组织及其基础设施构成的威胁。
       * 建立MAEC图形化数据模型来表示恶意软件家族的演变。建立MAEC实体之间的顶级关系来建模，从而可以追踪恶意软件的血统。关于顶级关系建模，使用MAEC为恶意软件实体和家族定义标准属性（比如字符串）来作为关联的要素。
       * 根据恶意软件的属性来关联攻击者和恶意软件工具集
@@ -203,7 +227,7 @@ ATT&CK相关资源
       * 使用统一恶意软件报告格式：避免当前市面上的报告都是自由格式且排除了有助于缓解恶意行为危害和分析恶意行为目的的缺陷，对恶意软件进行准确的和明确的报告，减少对恶意软件威胁本质的混淆，提供了额外的功能，比如基于机器的操作和自动获取恶意报告数据。
       * 不同恶意软件存储库互相映射，共享存储。
       * 修复：基于整理的恶意软件存储库，能够提供能完整的补救措施，提高系统未来的稳定性。（因为，大多数传统的反病毒工具和实用程序都不能清除检测到的恶意软件实例的每一个痕迹。即使从系统中清除了感染的显式恶意部分，而且恶意部分并不总是能完全清楚，其余部分也可能在未来的扫描中导致误报，潜在地导致补救资源的错误分配）
-      
+
 MITRE：
 * [CAPEC](https://capec.mitre.org/index.html):攻击模式的字典
   * 与CWE有关
@@ -286,8 +310,11 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 ### 十六、参考文献
 [ATT&CK](https://attack.mitre.org)
 
-## 中期
-### 中期答辩
+## Ⅲ 中期
+### Ⅲ-Ⅰ 中期答辩
+* ppt草稿
+
+答辩重点：
 * 确认目前毕设进展是否符合开题报告时的计划---符合
 * 确认是否可以按时按质量完成论文---能
 #### 一、开题目标复查
@@ -321,13 +348,12 @@ The Infection Monkey is an open source Breach and Attack Simulation (BAS) tool t
 ##### 五、参考文献
 MITRE ATT&CK:Design and Philosophy
 
-### 中期理论拓展
-#### （一） 数据库
+### Ⅲ-Ⅱ 中期理论拓展
+#### （一） 数据库(写到了论文中，没有在这里补充)
 ##### 1. redis
 ##### 2. mysql
-
 ##### 3. mongodb
-#### (二) IDS
+#### (二) IDS(写到了论文中，没有在这里补充)
 ##### 1. IDS
 ##### 2.Zeek
 * [docker-zeek](https://github.com/blacktop/docker-zeek)
@@ -359,6 +385,26 @@ Open vSwitch还提供了一些工具:
 * 硬件集成：Open vSwitch的转发路径(内核内数据路径)被设计成能够将包处理“卸载”到硬件芯片组，无论是位于经典的硬件交换机箱还是终端主机网卡中。这允许打开的vSwitch控制路径能够同时控制一个纯软件实现或一个硬件开关。
 * Open vSwitch在设计领域的目标与以前的管理程序网络栈不同，它关注的是大规模基于linux的虚拟化环境中对自动化和动态网络控制的需求。使用Open vSwitch的目标是使内核代码尽可能小(这是性能的需要)，并在适用时重用现有的子系统(例如，Open vSwitch使用现有的QoS堆栈)。从Linux 3.3开始，Open vSwitch作为内核的一部分被包含在内，用户空间实用程序的打包在大多数流行的发行版上都可以使用。
 [Why Open vSwitch?](https://docs.openvswitch.org/en/latest/intro/why-ovs/#why-open-vswitch)    
+
+*  ovn underlay vs overlay:  
+underlay:OVN需要OpenStack来提供容器网络。在这种模式下，可以创建逻辑网络，并且可以让容器在vm中运行，独立的vm(没有任何容器在vm中运行)和物理机器连接到同一个逻辑网络。这是一个多租户、多主机的解决方案。(容器运行在虚拟机中，而ovs则运行在虚拟机所在的物理机上，OVN将容器网络和虚拟机网络连接在一起)  
+overlay:OVN可以在运行在多台主机上的容器之间创建一个逻辑网络。这是一个单承租者(根据工作负载的安全性特征可扩展到多承租者)、多主机解决方案。无需预先创建OpenStack安装部署。(OVN通过logical overlay network连接所有节点的容器，此时ovs可以直接运行在物理机或虚拟机上)
+
+* ovn gre vs vxlan:  
+  * [Provider Network Support](https://docs.openstack.org/neutron/rocky/feature_classification/provider_network_support_matrix.html)
+  如下图所示，在四种网络协议中，vlan只能实现同一子网下的网络隔离，而vxlan弥补了这一不足，支持多层的网络隔离，除此之外，vxlan具备更强的包容性，支持Linux环境下网桥，能够使用ovs实现其部署。gre和vxlan的区别在于，gre同局域网内的主机必须彼此都互联才能通信（A---B,B---C,A---C），而vxlan支持“跳板机通信”（A---B---C）.VXLAN屏蔽了UDP的存在，上层基本上不感知这层封装。同时VXLAN避免了GRE的点对点必须有连接的缺点。由于需要IGMP，vxlan对于物理交换机和路由器需要做一些配置，这点在GRE是不需要的。抽象地将每个br-tun看成隧道端点，有状态的隧道点对点连接即为GRE；无状态的隧道使用UDP协议连接则为VXLAN。  
+  * [sdn-packet-flow](https://docs.openshift.com/container-platform/3.7/architecture/networking/sdn.html#sdn-packet-flow)
+```
+Now suppose first that container A is on the local host and container B is also on the local host. Then the flow of packets from container A to container B is as follows:
+eth0 (in A’s netns) → vethA → br0 → vethB → eth0 (in B’s netns)
+
+Next, suppose instead that container A is on the local host and container B is on a remote host on the cluster network. Then the flow of packets from container A to container B is as follows:
+eth0 (in A’s netns) → vethA → br0 → vxlan0 → network [1] → vxlan0 → br0 → vethB → eth0 (in B’s netns)
+
+Finally, if container A connects to an external host, the traffic looks like:
+eth0 (in A’s netns) → vethA → br0 → tun0 → (NAT) → eth0 (physical device) → Internet
+```
+![](images/network-support.png)
 ##### OVN
 * [OVN](https://www.ovn.org/en/)
 * [OVN:Open Virtual Network for Open vSwitch](http://www.openvswitch.org//support/slides/OVN-Vancouver.pdf)
@@ -399,14 +445,13 @@ dpdk网络层:硬件中断--->放弃中断流程  用户层通过设备映射取
 
 对比后总结:
 
-dpdk优势:
-* 减少了中断次数。
-* 减少了内存拷贝次数。
-* 绕过了linux的协议栈，进入用户协议栈，用户获得了协议栈的控制权，能够定制化协议栈降低复杂度
-
-dpdk劣势
-* 内核栈转移至用户层增加了开发成本.
-* 低负荷服务器不实用，会造成内核空转.
+* dpdk优势:
+  * 减少了中断次数。
+  * 减少了内存拷贝次数。
+  * 绕过了linux的协议栈，进入用户协议栈，用户获得了协议栈的控制权，能够定制化协议栈降低复杂度
+* dpdk劣势
+  * 内核栈转移至用户层增加了开发成本.
+  * 低负荷服务器不实用，会造成内核空转.
 
 ![](images/ovn-architecture.png)
 ##### OVN
@@ -462,39 +507,30 @@ Open Daylight是一个高度可用、模块化、可扩展、支持多协议的�
 　　基于OpenFlow实现SDN，则在网络中实现了软硬件的分离以及底层硬件的虚拟化，从而为网络的发展提供了一个良好的发展平台。 
 ##### OpenShift SDN
 OpenShift SDN使用了OpenvSwitch、VXLAN隧道、OpenFlow规则和iptables。这个网络可以通过使用巨帧、网卡卸载、多队列和ethtool设置来调优。
-
 ##### veth network
 veth:Vitual Ethernet Device
 * 为container所建,成对出现
 * 作用是把一个network namespace发出的数据包转发到另一个namespace，veth设备充当了连接两个network namespace的一根虚拟网线的作用。
 
-#### (四) CVE+CVSS
+#### (四) CVE+CVSS(写到了论文中，没有在这里补充)
 ##### 1.CVE
-
 ##### 2.CVSS
-## 结项
+## Ⅳ 结项
 ### 毕设论文要求
 * 应该抛开方法将问题本身，准确输出让别人能看懂前因后果
 * 选题依据+心路历程+解决历程+最后方法的裁决
    * 各种方法的比较分析
    * 体现思路和思维，深入思考最佳方法
 ### 实验总结
-1. 红队仿真/攻击方仿真/Adversary Emulation
+重点： 红队仿真/攻击方仿真/Adversary Emulation
 
-### 同学的毕设
-[朱妍欣同学的毕设](https://github.com/YanhuiJessica/Attack-Seaman):实现了知识库的可视化编辑和一键发布。  
-* Attackpatterns:用于增加tactics、techniques、sub-techniques
-* Relationship:用于关联tactics、techniques、sub-techniquesd的关系
-* 初始化数据来源:[不同版本的enterprise/mobile的Attack知识库文件](https://github.com/mitre/cti/)
-* 基于[ATT&CK Navigator](https://github.com/mitre-attack/attack-navigator#Install-and-Run),修改了数据文件，重新部署了json文件，用golang编写后端把文件放上去，使用[reactadmin框架](https://github.com/Liberxue/ReactAdmin)和mongodb
-* 只有矩阵的个性化编辑，没有进一步的procedures等细节内容
-* 必要性：由于att&ck只是一个抽象且标准的框架，而对于针对性较强的攻防环境需要更为细节和特征化的矩阵图
-## 实验
+## Ⅴ 实验及结果
 ### 实验环境
 ubuntu 16.04 TLS amd64+docker+docker-compose
 ### 实验步骤
 #### 一、模拟运行攻击方工具
-0. Install vmware and virtualbox on ubuntu 16.04 LTS(没用到虚拟机)
+* 模拟运行攻击方工具、入侵检测系统、以及配置攻击脚本运行环境
+##### 0. Install vmware and virtualbox on ubuntu 16.04 LTS(没用到虚拟机)
 [virtualbox官网](https://www.virtualbox.org/)下载virtualbox-6.1_6.1.18-142142_Ubuntu_xenial_amd64.deb，并使用scp拷贝到ubuntu虚拟机中，重命名为virtualbox.deb。
 ```
 sudo apt-get install  libqt5x11extras5 libsdl1.2debian
@@ -524,7 +560,7 @@ sudo apt-get install gksu
 sudo ./VMware-Workstation-Full-12.5.5-5234757.x86_64.bundle
 # 手动next安装完成
 ```
-1. Install Docker and Docker Compose
+##### 1. Install Docker and Docker Compose
 * 参考[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
 Install Docker
@@ -562,16 +598,6 @@ $ sudo add-apt-repository \
  $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 ```
-* 执行```sudo apt-get install docker-ce docker-ce-cli containerd.io```时出现报错:'Unable to locate package `docker-ce` on a 64bit ubuntu'。参考[Unable to locate package `docker-ce` on a 64bit ubuntu](https://unix.stackexchange.com/questions/363048/unable-to-locate-package-docker-ce-on-a-64bit-ubuntu)执行：
-```
-sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
-
-sudo apt update
-apt-cache search docker-ce
-sudo apt-get install docker-ce docker-ce-cli containerd.io
-```
 Install Docker-compose
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -580,23 +606,10 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose --version
 docker-compose version 1.15.0, build e12f3b9
-
 ```
-执行```docker-compose --version```的结果是```docker-compose version 1.8.0, build unknown```
-参考[unable to build docker-compose build](https://stackoverflow.com/questions/45978035/unable-to-build-docker-compose-build)  
-解决：
-```
-sudo apt-get purge docker-compose
-sudo curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.15.0/docker-compose-$(uname -s)-$(uname -m)"
-sudo chmod +x /usr/local/bin/docker-compose
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-docker-compose --version
-docker-compose version 1.15.0, build e12f3b9
-```
+##### 2. Install [Infection Monkey](https://www.guardicore.com/infectionmonkey/)（由于之后与靶场不符合，过程中淘汰）
 
-
-3. Install [Infection Monkey](https://www.guardicore.com/infectionmonkey/)
-从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。 
+从[Infection Monkey](https://www.guardicore.com/infectionmonkey/)官网上下载得到monkey-island-docker.tar.gz。使用scp拷贝到虚拟机当中。解压得到dk.monkeyisland.1.9.0.tar。   
 ![](images/001.png)
 ```
 sudo docker load -i dk.monkeyisland.1.9.0.tar
@@ -604,20 +617,6 @@ sudo docker pull mongo
 sudo mkdir -p /var/monkey-mongo/data/db
 sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo
 sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.9.0
-
-```
-* 执行'sudo docker pull mongo'时报错：'Error response from daemon: Head https://registry-1.docker.io/v2/library/mongo/manifests/latest: Get https://auth.docker.io/token?scope=repository%3Alibrary%2Fmongo%3Apull&service=registry.docker.io: net/http: TLS handshake timeout'。  
-参考[ERROR: Get https://registry-1.docker.io/v2/: net/http: TLS handshake timeout in Docker](https://stackoverflow.com/questions/52252791/error-get-https-registry-1-docker-io-v2-net-http-tls-handshake-timeout-in),重启docker```sudo systemctl restart docker```解决。
-![](images/002.png)
-* 执行'sudo docker pull mongo'时docker pull太慢，参考[Docker下载镜像太慢问题](https://www.cnblogs.com/spll/p/11828193.html)
-```
-sudo vim /etc/docker/daemon.json
-
-{
-  "registry-mirrors":["https://almtd3fa.mirror.aliyuncs.com"]
-}
-
-service docker restart
 ```
 Use Infection Monkey
 访问https://<server-ip>:5000  
@@ -625,19 +624,15 @@ Use Infection Monkey
 注册用户名和密码后，进入使用页面  
 ![](images/004.png)
 
-4. Install caldera
+##### 3. Install caldera
 ```
 git clone https://github.com/mitre/caldera.git --recursive --branch 3.0.0
 cd caldera
 pip3 install -r requirements.txt
 python3 server.py --insecure
 ```
-```http://localhost:8888```
-5. Install Cobalt Strike 
-```
-
-```
-6. Intsall Metasploit Framework
+访问```http://localhost:8888```
+##### 4. Intsall Metasploit Framework
 * [metasploit-framework=github](https://github.com/rapid7/metasploit-framework)
 ```
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && \
@@ -651,8 +646,8 @@ msfdb init
 
 msfconsole --version
 # Framework Version: 6.0.40-dev-
-``` 
-7. Install java
+```
+##### 5. Install java
 ```
 # Installing the Default JRE/JDK
 # update the package index.
@@ -669,7 +664,7 @@ sudo apt-get update
 # install Oracle JDK 8
 sudo apt-get install oracle-java8-installer
 ```
-5. Install Suricata
+##### 6. Install Suricata
 * [How To Install And Setup Suricata IDS On Ubuntu Linux 16.04](https://www.unixmen.com/install-suricata-ids-on-ubuntu-16-04/)
 * [Suricata-Installation](https://suricata.readthedocs.io/en/suricata-6.0.0/install.html)
 ```
@@ -695,7 +690,7 @@ ethtool -K eth0 gro off lro off
 # start Suricata in pcap live mode
 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i ens160 --init-errors-fatal
 ```
-6. Install Bro/Zeek
+##### 7. Install Bro/Zeek
 ```
 sudo apt-get update
 
@@ -719,21 +714,22 @@ make
 sudo make install
 ```
 #### 二、准备一个四台靶机的靶场环境
-##### 实验网络环境说明
-未使用Open vSwitch
-| 主机序号 | 主机名称 | 漏洞名称| 桥接网络Ip | 端口映射 | 访问网址 |
-|----|----|----|----|----|----|
-|DEV-1|misskey-11.20.1|CVE-2019-1020010|172.19.0.1|3000->3000/tcp 11277->22/tcp|127.0.0.1:3000 172.19.0.1:3000 192.168.122.1:3000|  
-|DVE-2|oa-shiro-url|CVE-2016-4437|172.20.0.1|10020->22/tcp 11020->28/tcp 8123->8080/tcp|127.0.0.1:8123/projectoa 172.20.0.1:8123/projectoa 192.168.122.1:8123/projectoa|
-|DVE-3|biubiu-s2-007|jumpserver|172.18.0.1|8135->8080/tcp|127.0.0.1:8135 172.18.0.1:8135 192.168.122.1:8135|
-|DVE-4|GrandNode|CVE-2019-12276|172.21.0.1|10049->22/tcp 8181->8080/tcp|127.0.0.1:8181 172.21.0.1:8181 192.168.122.1:8181|  
+* Writeup内部保留
+##### 0. 靶场信息
+###### 靶场还原CVE列表
+![](images/CVEs.jpg)
+###### 靶标部署结果列表
+|靶机序号	|靶机名称|	漏洞名称|	数据库|	入侵检测系统|
+|----|----|----|----|----|
+|靶标-1|	misskey-11.20.1|	CVE-2019-1020010	|redis 4.0.4|	zeek:alpine|
+|靶标-2	|oa-shiro-url|	CVE-2016-4437	|mysql 5.6	|zeek:alpine|
+|靶标-3	|biubiu-s2-007|	无|	mysql 5.6.48	|zeek:alpine|
+|靶标-4|	GrandNode	|CVE-2019-12276|	mongo	|zeek:alpine|
 
-网络连通性部署  
-```brctl show```查看veth设备与各个网桥的连接情况，四个靶机都成功运行时的连接情况如下图所示。  
-![](images/veth-connection.png)
-##### DVE-1 misskey-11.20.1---CVE-2019-1020010
+##### 1. DVE-1 misskey-11.20.1---CVE-2019-1020010
 * [CVE-2019-1020010](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-1020010)
-Misskey是一套微型博客平台。 Misskey 10.102.4之前版本中存在安全漏洞。攻击者可利用该漏洞劫持用户令牌。
+Misskey是一套微型博客平台。 Misskey 10.102.4之前版本中存在安全漏洞。攻击者可利用该漏洞劫持用户令牌。 
+
 ###### BUILD
 * [Poc-CVE-2019-1020010](https://github.com/nomi-sec/PoC-in-GitHub)  
 * [Misskey](https://github.com/misskey-dev/misskey)
@@ -743,88 +739,31 @@ Misskey是一套微型博客平台。 Misskey 10.102.4之前版本中存在安�
 ###### BUILD FEATURES：
 * db: redis 4.0.4
 * ids: zeek:alpine
-###### 单靶机Writeup
-访问172.19.0.1：3000，可以看到平台名称是misskey。
-![](images/1-1.jpg)
-注册后登录:username:mudou;pwd:123456
-![](images/1-2.png)
-'Inspect Element',获得网站开发者名为syuilo
-
-##### DVE-2 oa_shiro_url---CVE-2016-4437
+###### BUILD RESULT
+![](images/dve-1-ok.png)
+##### 2. DVE-2 oa_shiro_url---CVE-2016-4437
+###### BUILD
 * [CVE-2016-4437](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-4437)
 * [【漏洞复现】Apache Shiro 1.2.4反序列化漏洞复现及分析(cve-2016-4437)](https://www.matrixghd.com/2020/10/16/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-Apache-Shiro-1.2.4%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%8F%8A%E5%88%86%E6%9E%90(cve-2016-4437)/)
 ###### BUILD FEATURES：
 * db: mysql 5.6
 * ids: zeek:alpine
-###### 单靶机Writeup
-
-Change:
-
-```
-# delete following content
-def:
-  build:
-    context:./def
-    dockerfile:Dockerfile
-  network_mode:service:web
-  container_name:oa-shiro-url-def-zeek
-  entrypoint:/entrypoint.sh
-# sudo docker-compose up
-```
-##### DVE-3 biubiu-s2-007---jumpserver
+###### BUILD RESULT
+![](images/dve-2-ok.png)
+##### 3. DVE-3 biubiu-s2-007---jumpserver
 ###### BUILD FEATURES:
 * db: mysql 5.6.48
 * ids: zeek:alpine
-###### 单靶机Writeup
-
-Change:
-```
-# 修改.yml的pull地址
-
-  build:
-    image: registry.cn-beijing.aliyuncs.com/shawnsky/biubiu-s2-007:base-v1
-
-  config:
-    image: registry.cn-beijing.aliyuncs.com/shawnsky/
-
-  poc:
-    image: registry.cn-beijing.aliyuncs.com/shawnsky/
-
-  ids:
-    image: shawnsky/zeek:alpine
-```
-##### DVE-4 GrandNode---CVE-2019-12276
+###### BUILD RESULT
+![](images/dve-3-ok.png)
+##### 4. DVE-4 GrandNode---CVE-2019-12276
 ###### BUILD FEATURES:
 * db:mongo
 * ids:zeek:alpine
-###### 单靶机Writeup
+###### BUILD RESULT
+![](images/dve-4-ok.png)
 
-Problems:
-执行```./docker-compose_up.sh```时，出现报错
-```
-ERROR: Version in "./docker-compose.yml" is unsupported. You might be seeing this error because you're using the wrong Compose file version. Either specify a supported version (e.g "2.2" or "3.3") and place your service definitions under the `services` key, or omit the `version` key and place your service definitions at the root of the file to use version 1.
-For more on the Compose file format versions, see https://docs.docker.com/compose/compose-file/
-```
-解决：参考[Compose file](https://docs.docker.com/compose/compose-file/)可以看到version为3.4的docker-compose需要的docker引擎是17.09.0+,当前的版本信息如下：
-```
-docker --version
-Docker version 20.10.5, build 55c4c88
-docker-compose --version
-docker-compose version 1.15.0, build e12f3b9
-```
-重新下载docker-compose
-```
-# uninstall docker-compose
-sudo rm /usr/local/bin/docker-compose
-pip uninstall docker-compose
-
-# install docker-compose
-sudo curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/run.sh -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
-
-
-5. Install Open vSwitch
+##### 5. Install Open vSwitch
 ```
 # ubuntu16.04
 sudo apt-get install openvswitch-switch
@@ -842,19 +781,12 @@ apt-get install -y openvswitch-switch openvswitch-common
 # special for misskey, based on alpine
 apk add openvswitch
 ```
-6. 网络连通性配置
+##### 6. 网络连通性配置
 * [How to use an OVS Bridge for Networking on Docker?](https://www.tutorialspoint.com/how-to-use-an-ovs-bridge-for-networking-on-docker)
 * [docker network create](https://docs.docker.com/engine/reference/commandline/network_create/)
 * [Open vSwitch on Linux, FreeBSD and NetBSD-validating](https://docs.openvswitch.org/en/latest/intro/install/general/#validating)
 * [Multi-Host Overlay Networking with Open vSwitch](https://docker-k8s-lab.readthedocs.io/en/latest/docker/docker-ovs.html)
-直接新建docker bridge network,添加container，不用ovs可不可以?两者之间各有什么优缺点？用ovs的好处是什么？
 ```
-# connect containers with the network:
-docker network connect myNetwork container1-web
-docker network connect myNetwork container2-web
-```
-```
-
 # create an ovs bridge
 sudo ovs-vsctl add-br ovs-br1
 sudo ovs-vsctl add-br ovs-br2
@@ -878,38 +810,47 @@ mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth1 biubiu-s2-007_we
 mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth2 biubiu-s2-007_web_1 --ipaddress="10.3.0.2/24" --gateway="10.3.0.254" --macaddress="00:00:03:00:00:02"
 RTNETLINK answers: File exists
 mudou@mudou-VirtualBox:~$ sudo ovs-docker add-port ovs-br1 eth1 grandnode-4.40-web-app --ipaddress="10.3.0.3/24" --gateway="10.3.0.254" --macaddress="00:00:03:00:00:03"
-
+* 增加流表规则实现连通性（不公开）
 ```
+###### 配置结果  
+![](images/network-result.png)
+###### 连通性测试
+网段一  
+![](images/network-test-1.png)
+网段二   
+![](images/network-test-2.png)
+网段三   
+![](images/network-test-3.png)
+###### 网络连通性实践数据草稿
+未使用Open vSwitch时网络情况
+| 主机序号 | 主机名称 | 漏洞名称| 桥接网络Ip | 端口映射 | 访问网址 |
+|----|----|----|----|----|----|
+|DEV-1|misskey-11.20.1|CVE-2019-1020010|172.19.0.1|3000->3000/tcp 11277->22/tcp|127.0.0.1:3000 172.19.0.1:3000 192.168.122.1:3000|
+|DVE-2|oa-shiro-url|CVE-2016-4437|172.20.0.1|10020->22/tcp 11020->28/tcp 8123->8080/tcp|127.0.0.1:8123/projectoa 172.20.0.1:8123/projectoa 192.168.122.1:8123/projectoa|
+|DVE-3|biubiu-s2-007|jumpserver|172.18.0.1|8135->8080/tcp|127.0.0.1:8135 172.18.0.1:8135 192.168.122.1:8135|
+|DVE-4|GrandNode|CVE-2019-12276|172.21.0.1|10049->22/tcp 8181->8080/tcp|127.0.0.1:8181 172.21.0.1:8181 192.168.122.1:8181|
+
+网络连通性部署  
+```brctl show```查看veth设备与各个网桥的连接情况，四个靶机都成功运行时的连接情况如下图所示。  
+![](images/veth-connection.png)
+
 * ip写错了，需要删除ovs新建的网桥
 参考[ovs-vsctl del-br](https://docs.pica8.com/display/PICOS2111cg/ovs-vsctl+del-br)，执行```sudo ovs-vsctl --if-exists del-br ovs-br2```删除ovs-br2,然后新建。
 
-* ovn underlay vs overlay:  
-underlay:OVN需要OpenStack来提供容器网络。在这种模式下，可以创建逻辑网络，并且可以让容器在vm中运行，独立的vm(没有任何容器在vm中运行)和物理机器连接到同一个逻辑网络。这是一个多租户、多主机的解决方案。(容器运行在虚拟机中，而ovs则运行在虚拟机所在的物理机上，OVN将容器网络和虚拟机网络连接在一起)  
-overlay:OVN可以在运行在多台主机上的容器之间创建一个逻辑网络。这是一个单承租者(根据工作负载的安全性特征可扩展到多承租者)、多主机解决方案。无需预先创建OpenStack安装部署。(OVN通过logical overlay network连接所有节点的容器，此时ovs可以直接运行在物理机或虚拟机上)
-
-* ovn gre vs vxlan:  
-[Provider Network Support](https://docs.openstack.org/neutron/rocky/feature_classification/provider_network_support_matrix.html)
-如下图所示，在四种网络协议中，vlan只能实现同一子网下的网络隔离，而vxlan弥补了这一不足，支持多层的网络隔离，除此之外，vxlan具备更强的包容性，支持Linux环境下网桥，能够使用ovs实现其部署。gre和vxlan的区别在于，gre同局域网内的主机必须彼此都互联才能通信（A---B,B---C,A---C），而vxlan支持“跳板机通信”（A---B---C）.VXLAN屏蔽了UDP的存在，上层基本上不感知这层封装。同时VXLAN避免了GRE的点对点必须有连接的缺点。由于需要IGMP，vxlan对于物理交换机和路由器需要做一些配置，这点在GRE是不需要的。抽象地将每个br-tun看成隧道端点，有状态的隧道点对点连接即为GRE；无状态的隧道使用UDP协议连接则为VXLAN。  
-  * [sdn-packet-flow](https://docs.openshift.com/container-platform/3.7/architecture/networking/sdn.html#sdn-packet-flow)
+* 【实践中思考】直接新建docker bridge network,添加container，不用ovs可不可以?两者之间各有什么优缺点？用ovs的好处是什么？
+docker bridge network可以了，增加网卡和网桥即可
 ```
-Now suppose first that container A is on the local host and container B is also on the local host. Then the flow of packets from container A to container B is as follows:
-eth0 (in A’s netns) → vethA → br0 → vethB → eth0 (in B’s netns)
-
-Next, suppose instead that container A is on the local host and container B is on a remote host on the cluster network. Then the flow of packets from container A to container B is as follows:
-eth0 (in A’s netns) → vethA → br0 → vxlan0 → network [1] → vxlan0 → br0 → vethB → eth0 (in B’s netns)
-
-Finally, if container A connects to an external host, the traffic looks like:
-eth0 (in A’s netns) → vethA → br0 → tun0 → (NAT) → eth0 (physical device) → Internet
+# connect containers with the network:
+docker network connect myNetwork container1-web
+docker network connect myNetwork container2-web
 ```
-![](images/network-support.png)
 
-
-| DEV序号 | container-name | container-id | 
+| DEV序号 | container-name | container-id |
 |----|----|----|
 |DVE-1|misskey-11.20.1-web-app|9f342a322dba|
 |DVE-2|oa-shiro-url-web-app|2605d873a346|
 |DVE-3|biubiu-s2-007_web_1|fc546af81215|
-|DVE-4|grandnode-4.40-web-app|5e80af7a5be4| 
+|DVE-4|grandnode-4.40-web-app|5e80af7a5be4|
 
 veth设备情况：
 |DVE序号|web-app-name|bridge name |    bridge id        |       STP enabled    | interfaces|
@@ -955,30 +896,98 @@ sudo docker exec -ti 2605d873a346 ping 2605d873a346
 sudo docker exec -ti 2605d873a346 ping 172.22.0.3
 
 ```
-* ```sudo docker exec -ti 2605d873a346 ping fc546af81215 OCI runtime exec failed: exec failed: container_linux.go:367: starting container process caused: exec: "ping": executable file not found in $PATH: unknown```  
-参考[OCI runtime exec failed: exec failed: container_linux.go:344: starting container process](https://stackoverflow.com/questions/55378420/oci-runtime-exec-failed-exec-failed-container-linux-go344-starting-container)
-```
-sudo apt-get update
-sudo apt-get install inetutils-ping
-
-mkdir ubuntu_with_ping
-cat >ubuntu_with_ping/Dockerfile <<'EOF'
-FROM ubuntu
-RUN apt-get update && apt-get install -y iputils-ping
-CMD bash
-EOF
-docker build -t ubuntu_with_ping ubuntu_with_ping
-docker run -it ubuntu_with_ping
-```
-
 |DVE序号|靶机名称|docker-bridge-network-name|internal-GW-address|web-app-ip-address|
 |----|----|----|----|----|
 |DVE-1|misskey-11.20.1|br-8ab47b7a4b04|172.19.0.1|172.19.0.5|
 |DVE-2|oa-shiro-url|br-e5ca58eb2d4d|172.20.0.1|172.20.0.5|
 |DVE-3|biubiu-s2-007|br-d5166eca3f52|172.18.0.1|172.18.0.3|
 |DVE-4|GrandNode|br-65f62d0dc80d|172.21.0.1|172.21.0.3|
-* 使用tmux时出现报错```error connecting to /tmp/tmux-1000/default (No such file or directory)```  
-参考[tmux Introduction, Configuration, and Boot-Time Setup](https://markmcb.com/2016/05/23/tmux-introduction-configuration-boot-time-setup/)
+
+#### 三、用攻击方模拟工具威胁模拟
+##### 威胁模拟流程图
+![](images/attack-process.png)
+##### 威胁模拟结果图
+DVE-1
+![](images/dve-1-result.png)
+DVE-2
+![](images/dve-2-result.png)
+DVE-3
+![](images/dve-3-result.png)
+DVE-4
+![](images/dve-4-result.png)
+#### 四、Python自动化攻击脚本
+##### 功能框架图
+![](images/autoattack-function.png)
+##### 攻击结果
+![](images/python-result.png)
+#### 五、实验结果
+##### IDS检测情况
+![](images/ids-result.png)
+#### 六、实验问题
+##### 一、模拟运行攻击方工具
+###### 1. Install Docker and Docker-compose
+ 1)执行```sudo apt-get install docker-ce docker-ce-cli containerd.io```时出现报错:'Unable to locate package `docker-ce` on a 64bit ubuntu'。参考[Unable to locate package `docker-ce` on a 64bit ubuntu](https://unix.stackexchange.com/questions/363048/unable-to-locate-package-docker-ce-on-a-64bit-ubuntu)执行：
+```
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+
+sudo apt update
+apt-cache search docker-ce
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+2)执行```docker-compose --version```的结果是```docker-compose version 1.8.0, build unknown```
+参考[unable to build docker-compose build](https://stackoverflow.com/questions/45978035/unable-to-build-docker-compose-build)  
+解决：
+```
+sudo apt-get purge docker-compose
+sudo curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.15.0/docker-compose-$(uname -s)-$(uname -m)"
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+docker-compose version 1.15.0, build e12f3b9
+```
+###### 2. Install Infection Monkey
+（1）执行'sudo docker pull mongo'时报错：'Error response from daemon: Head https://registry-1.docker.io/v2/library/mongo/manifests/latest: Get https://auth.docker.io/token?scope=repository%3Alibrary%2Fmongo%3Apull&service=registry.docker.io: net/http: TLS handshake timeout'。  
+参考[ERROR: Get https://registry-1.docker.io/v2/: net/http: TLS handshake timeout in Docker](https://stackoverflow.com/questions/52252791/error-get-https-registry-1-docker-io-v2-net-http-tls-handshake-timeout-in),重启docker```sudo systemctl restart docker```解决。
+![](images/002.png)
+* 执行'sudo docker pull mongo'时docker pull太慢，参考[Docker下载镜像太慢问题](https://www.cnblogs.com/spll/p/11828193.html)
+```
+sudo vim /etc/docker/daemon.json
+
+{
+  "registry-mirrors":["https://almtd3fa.mirror.aliyuncs.com"]
+}
+
+service docker restart
+```
+
+##### 二、准备一个四台靶机的靶场环境
+（1）执行```./docker-compose_up.sh```时，出现报错
+```
+ERROR: Version in "./docker-compose.yml" is unsupported. You might be seeing this error because you're using the wrong Compose file version. Either specify a supported version (e.g "2.2" or "3.3") and place your service definitions under the `services` key, or omit the `version` key and place your service definitions at the root of the file to use version 1.
+For more on the Compose file format versions, see https://docs.docker.com/compose/compose-file/
+```
+解决：* 参考[Compose file](https://docs.docker.com/compose/compose-file/)
+可以看到version为3.4的docker-compose需要的docker引擎是17.09.0+,当前的版本信息如下：
+```
+docker --version
+Docker version 20.10.5, build 55c4c88
+docker-compose --version
+docker-compose version 1.15.0, build e12f3b9
+```
+重新下载docker-compose
+```
+# uninstall docker-compose
+sudo rm /usr/local/bin/docker-compose
+pip uninstall docker-compose
+
+# install docker-compose
+sudo curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/run.sh -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+（2）使用tmux时出现报错```error connecting to /tmp/tmux-1000/default (No such file or directory)```    
+* 参考[tmux Introduction, Configuration, and Boot-Time Setup](https://markmcb.com/2016/05/23/tmux-introduction-configuration-boot-time-setup/)
 ```
 # Setup a session called "stuff" that has 2 windows.
 # The first window we'll call "text-to-file"
@@ -1027,33 +1036,46 @@ cd -
 
 rm -fr /tmp/tmux
 ```
-#### 三、用攻击方模拟工具自动检测内网环境
+（3）出现报错```sudo docker exec -ti 2605d873a346 ping fc546af81215 OCI runtime exec failed: exec failed: container_linux.go:367: starting container process caused: exec: "ping": executable file not found in $PATH: unknown```    
+* 参考[OCI runtime exec failed: exec failed: container_linux.go:344: starting container process](https://stackoverflow.com/questions/55378420/oci-runtime-exec-failed-exec-failed-container-linux-go344-starting-container)
+```
+sudo apt-get update
+sudo apt-get install inetutils-ping
 
+mkdir ubuntu_with_ping
+cat >ubuntu_with_ping/Dockerfile <<'EOF'
+FROM ubuntu
+RUN apt-get update && apt-get install -y iputils-ping
+CMD bash
+EOF
+docker build -t ubuntu_with_ping ubuntu_with_ping
+docker run -it ubuntu_with_ping
+```
 
-#### 四、写自己的自动化攻击脚本
-
-#### 五、场景设计总结
-
-##### 连通性需求
+## Ⅵ 场景设计总结
+### 靶场场景图
+![](images/range-environment.png)
+### 连通性需求
 * 内⽹-1 和其他内⽹均不连通 
 * 内⽹-2 和 内⽹-3 双向连通 
 * 内⽹-2 和 内⽹-4 双向不连通 
 * 内⽹-3 和 内⽹-4 双向连通
-##### 靶标需求
+### 靶标需求
 * DVE-1 配置域名访问⽅式，具备「信息泄露」效果 
 * DVE-2 配置域名访问⽅式，需要管理员⽤户帐号登录，最终要达到「RCE」效果 
 * DVE-3 游客身份下，最终要达到「RCE」效果 
 * DVE-4 具备「任意⽂件读取」效果
-##### 基础设施需求
+### 基础设施需求
 ⽹络拓扑中的路由器和交换机基于 ovs 实现。
-##### 靶标列表
+![](images/network-layers.png)
+### 靶标列表
 |编号| DVE名称 |漏洞利⽤条件（所需权限）| 漏洞利⽤效果| 备注|
-|----|----|----| ---- | ---- |  
+|----|----|----| ---- | ---- |
 |DVE-1| misskey-11.20.1| ⽆权限约束 |获取管理员| cookie| ⽆|
 |DVE-2 |oa-shiro-url| 管理员帐号|远程代码执⾏ |⽆|
 |DVE-3| biubiu-s2-007| ⽆权限约束|远程代码执⾏| ⽆|
 |DVE-4 |GrondNode |⽆权限约束 |路径遍历任意⽂件读取| ⽆|
-##### 攻击路径
+### 攻击路径
 1. 攻击者通过域名访问 DVE-1，利⽤ XSS 漏洞获得管理员⽤户的 cookie 
 2. 利⽤管理员 cookie，查看并下载管理员⽤户的⽹盘内容（DVE-1 包含个⼈⽂件存储功能），发现 DVE2 的域名和帐号密码 
 3. 访问第 2 步获取的 DVE-2 的域名，并登录账户，在内部公告信息⾥看到内⽹服务上线信息，得到 DVE-3 和 DVE-4 的 IP。同时进⾏漏洞利⽤并拿到 shell-0 
@@ -1061,7 +1083,7 @@ rm -fr /tmp/tmux
 5. 访问 DVE-3 并进⾏漏洞利⽤，最终拿到 shell-1 
 6. 利⽤获得的 shell-1，对第 3 步获取的 DVE-4 IP 进⾏端⼝扫描并建⽴信道 
 7. 访问 DVE-4 并进⾏漏洞利⽤，最终读取 /flag.txt ⽂件
-##### 基于 ATT&CK 的攻击技术图
+### 基于 ATT&CK 的攻击技术图
 * [attack.github.io](https://mitre-attack.github.io/attack-navigator/v2/enterprise/)
 * [attack-navigator](https://github.com/mitre-attack/attack-navigator)
 * 该攻击技术图没有区分技术点的重要性，仅仅突出本次实验涉及到的技术点
@@ -1071,15 +1093,32 @@ rm -fr /tmp/tmux
   * 比如[Resource Development]下有[Acquire Infrastructure]和[Compromise Infrustructure],这两个technique拥有相同的sub-technique，经过深入理解发现，前者强调直接针对服务器的攻击，而后者强调通过先对第三方攻击，再进一步攻击服务器。
 
 ![](images/attack-points.svg)
-##### 基于 ATT&CK 的攻击路线图
+### 基于 ATT&CK 的攻击路线图
 ![](images/attack-route.png)
-#### 六、实验问题
 
-#### 七、演示视频
+### 完整攻防图
+![](images/emulation.png)
 
-#### 八、参考文献
+## Ⅶ 指导总结
+|指导阶段|指导时间|工作内容|完成情况|
+|----|----|----|----|
+|第一阶段|2020-12-01 —— 2020-12-31|、|100%|
+|第二阶段|2021-01-01 —— 2021-02-07|四台靶机虚拟化部署|100%|
+|第三阶段|2021-02-15 —— 2021-02-28|靶场网络连通与隔离|100%|
+|第四阶段|2021-03-01 —— 2021-03-31|威胁模拟工具设计与运行|100%|
+|第五阶段|2021-04-01 ——2021-04-14|基于ATT&CK的攻击路线图和攻击要点图绘制|100%|
+|第六阶段|2021-04-15 —— 2021-05-11|毕业论文写作，结项答辩|100%|
 
+## Ⅷ 同学的毕设
 
+[朱妍欣同学的毕设](https://github.com/YanhuiJessica/Attack-Seaman):实现了知识库的可视化编辑和一键发布。  
+
+* Attackpatterns:用于增加tactics、techniques、sub-techniques
+* Relationship:用于关联tactics、techniques、sub-techniquesd的关系
+* 初始化数据来源:[不同版本的enterprise/mobile的Attack知识库文件](https://github.com/mitre/cti/)
+* 基于[ATT&CK Navigator](https://github.com/mitre-attack/attack-navigator#Install-and-Run),修改了数据文件，重新部署了json文件，用golang编写后端把文件放上去，使用[reactadmin框架](https://github.com/Liberxue/ReactAdmin)和mongodb
+* 只有矩阵的个性化编辑，没有进一步的procedures等细节内容
+* 必要性：由于att&ck只是一个抽象且标准的框架，而对于针对性较强的攻防环境需要更为细节和特征化的矩阵图
 
 
 
