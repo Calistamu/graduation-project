@@ -1120,6 +1120,40 @@ docker run -it ubuntu_with_ping
 * 只有矩阵的个性化编辑，没有进一步的procedures等细节内容
 * 必要性：由于att&ck只是一个抽象且标准的框架，而对于针对性较强的攻防环境需要更为细节和特征化的矩阵图
 
+## Ⅸ 2022-2补充
+### [MITRE ATT&CK for ICS](https://www.armis.com/white-papers/comprehensive-coverage-for-mitre-attck-for-ics/?utm_medium=paid-search&utm_source=google-search&utm_content=&utm_term=mitre%20attack%20techniques_p&utm_campaign=OT-Americas-EN-Search-Lead_Gen&sfdcid=7011n0000007tMHAAY&gclid=EAIaIQobChMIuNC69IWQ9gIVfWxvBB0RdAWWEAAYASAAEgJjp_D_BwE)工控安全的ATT&CK框架
+>白皮书：papers/Armis_MITRE_ATTACK_Definitive-EngenuityGuide-SB.pdf
+
+2020.1，ATT&CK系列框架中出现了新的框架：MITRE ATT&CK for ICS
+### ATT&CK落地方案
+>paper/10-ways-to-take-the-mitre-att-and-ck-framework-from-plan-to-action.pdf
+### 市场上融合了ATT&CK的产品
+#### [ARMIS](https://www.armis.com/armis-platform/)
+* [ARMIS-demo](https://www.armis.com/demo/)(还没有得到)
+
+结合了ATT&CK,能够对内部控制系统（ICS）和操作技术环境（OT）进行检测，能明确给出检测到了ATT&CK框架中的哪些技术短语
+
+#### [XM Cyber](https://www.xmcyber.com/)
+基于SaaS的平台,Breach and Attack Simulation​入侵和攻击模拟，
+#### Infection Monkey
+### 毕设改进之一
+对于毕设中的路线图，排除特定的测试环境而言，不如说下图这样的路线图更好，因为给出了攻击的更多可能性，可以给防御者更好的改进思路。   
+（[图片来源](https://www.f5.com/labs/articles/education/mitre-attack-what-it-is-how-it-works-who-uses-it-and-why),这篇文章也给出了根据攻击手段的有效性或重要性进行不同颜色的标注，此外，ATT&CK是有针对APT攻击的）
+![](images/add-attck-map.png)
+### [红队 蓝队 紫队 老虎队](https://www.emagined.com/red-team-and-blue-team)
+purple team:同时具有进攻和防御的思想，旨在确保整体和协同操作以及攻击者和公司防御者之间的信息交换。  
+tiger team:针对特别问题。  
+根据Lockheed Martin's Cyber Kill Chain，红队的攻击完整攻击流程：  
+![](images/red-team-chain.png) 
+红队测试工具如下：
+![](images/red-team-tools.png)
+蓝队应该具备的功能或SOC完整的服务流程：
+![](images/blue-team-soc.png)
+蓝队测试工具如下：
+![](images/blue-team-tools.png)
+红蓝队对比总结：  
+![](images/red-vs-blue.png)
+
 
 
 
